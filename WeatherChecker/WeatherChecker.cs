@@ -23,7 +23,7 @@ namespace Vishnu_UserModules
     /// The weather forecasts come from http://www.7timer.info.
     /// Many thanks to Chenzhou Cui and his friends, who run this wonderful free weather-forecast site.
     /// Wiki on https://github.com/Yeqzids/7timer-issues/wiki/Wiki.
-    /// API on http://www.7timer.info/bin/api.pl?lon=6.7821&lat=51.2375&product=civil&output=json.
+    /// API on http://www.7timer.info/bin/api.pl?lon=6.7821&amp;lat=51.2375&amp;product=civil&amp;output=json.
     /// 
     /// 11.10.2020 Erik Nagel: erstellt
     /// </remarks>
