@@ -60,46 +60,60 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NetEti.AppEnvReader, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.AppEnvReader.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.AppEnvReader.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.BasicAppSettings, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.BasicAppSettings.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.BasicAppSettings.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.CommandLineAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.CommandLineAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.CommandLineAccess.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.EnvAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.EnvAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.EnvAccess.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.Global, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.Global.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.Global.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.InfoController, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.InfoController.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.InfoController.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.Logging, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.Logging.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.Logging.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.MultiScreen, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.MultiScreen.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.MultiScreen.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.MVVMini, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.MVVMini.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.MVVMini.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.ObjectSerializer, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.ObjectSerializer.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.ObjectSerializer.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.PropertyAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.PropertyAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.PropertyAccess.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.RegAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.RegAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.RegAccess.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.SettingsAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.SettingsAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.SettingsAccess.dll</HintPath>
     </Reference>
     <Reference Include="NetEti.XMLAccess, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.XMLAccess.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\NetEti.XMLAccess.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -115,7 +129,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Vishnu.Interchange, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Vishnu_Interchange.5.1.2\lib\Vishnu.Interchange.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Vishnu_Interchange.5.1.2\lib\Vishnu.Interchange.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
