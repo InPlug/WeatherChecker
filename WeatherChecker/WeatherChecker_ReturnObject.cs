@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Vishnu_UserModules
+namespace WeatherChecker
 {
     /// <summary>
     /// ReturnObject für das Ergebnis des WeatherCheckers.
@@ -14,26 +14,27 @@ namespace Vishnu_UserModules
     ///
     /// 12.10.2022 Erik Nagel: erstellt
     /// </remarks>
-    [Serializable()]
+    [DataContract]//[Serializable()]
     public class WeatherChecker_ReturnObject
     {
         /// <summary>
         /// Eine Wettervorhersage für einen bestimmten Zeitabschnitt.
         /// </summary>
-        [Serializable()]
+        [DataContract]//[Serializable()]
         public class ForecastDataPoint
         {
             /// <summary>
             /// Unterklasse: fasst Windrichtung und Windgeschwindigkeit zusammen.
             /// </summary>
-            [Serializable()]
+            [DataContract]//[Serializable()]
             public class Wind
             {
                 /// <summary>
                 /// Windrichtung: N, NE, E, SE, S, SW, W, NW.
                 /// </summary>
+                [DataMember]
                 [JsonProperty("direction")]
-                public string Direction { get; set; }
+                public string? Direction { get; set; }
 
                 /// <summary>
                 /// Windgeschwindigkeit:
@@ -46,8 +47,9 @@ namespace Vishnu_UserModules
                 ///     7	24.5-32.6m/s    (stürmisch)
                 ///     8	über 32.6m/s    (Orkan)
                 /// </summary>
+                [DataMember]
                 [JsonProperty("speed")]
-                public int Speed { get; set; }
+                public int? Speed { get; set; }
 
                 /// <summary>
                 /// Standard Konstruktor.
@@ -62,7 +64,7 @@ namespace Vishnu_UserModules
                 protected Wind(SerializationInfo info, StreamingContext context)
                 {
                     this.Direction = info.GetString("Direction");
-                    this.Speed = (int)info.GetValue("Speed", typeof(int));
+                    this.Speed = (int?)info.GetValue("Speed", typeof(int));
                 }
 
                 /// <summary>
@@ -93,7 +95,7 @@ namespace Vishnu_UserModules
                 /// </summary>
                 /// <param name="obj"></param>
                 /// <returns>True, wenn das übergebene Objekt inhaltlich gleich diesem Objekt ist.</returns>
-                public override bool Equals(object obj)
+                public override bool Equals(object? obj)
                 {
                     if (obj == null || this.GetType() != obj.GetType())
                     {
@@ -124,8 +126,9 @@ namespace Vishnu_UserModules
             /// <summary>
             /// Definiert den Aufsetz-Zeitpunkt.
             /// </summary>
+            [DataMember]
             [JsonProperty("timepoint")]
-            public int Timepoint { get; set; }
+            public int? Timepoint { get; set; }
 
             /// <summary>
             /// Bewölkung:
@@ -139,8 +142,9 @@ namespace Vishnu_UserModules
             ///     8	81%-94%
             ///     9	94%-100%
             /// </summary>
+            [DataMember]
             [JsonProperty("cloudcover")]
-            public int Cloudcover { get; set; }
+            public int? Cloudcover { get; set; }
 
             /// <summary>
             /// Stabilitätsindikator - je kleiner, desto instabiler ist die Wetterlage:
@@ -153,14 +157,16 @@ namespace Vishnu_UserModules
             ///      10	     8 to 11
             ///      15	    Over 11
             /// </summary>
+            [DataMember]
             [JsonProperty("lifted_index")]
-            public int Lifted_Index { get; set; }
+            public int? Lifted_Index { get; set; }
 
             /// <summary>
             /// Niederschlag: snow, rain, frzr (freezing rain), icep (ice pellets), none.
             /// </summary>
+            [DataMember]
             [JsonProperty("prec_type")]
-            public string Prec_Type { get; set; }
+            public string? Prec_Type { get; set; }
 
             /// <summary>
             /// Niederschlagsmenge:
@@ -175,26 +181,30 @@ namespace Vishnu_UserModules
             ///     8	50-75mm/hr
             ///     9	Over 75mm/hr
             /// </summary>
+            [DataMember]
             [JsonProperty("prec_amount")]
-            public int Prec_Amount { get; set; }
+            public int? Prec_Amount { get; set; }
 
             /// <summary>
             /// Temperatur (in 2 m Höhe über dem Erdboden gemessen): -76 to 60: -76C to +60C.
             /// </summary>
+            [DataMember]
             [JsonProperty("temp2m")]
-            public int Temp2m { get; set; }
+            public int? Temp2m { get; set; }
 
             /// <summary>
             /// Relative Luftfeuchtigkeit (in 2 m Höhe über dem Erdboden gemessen): 0 to 100: 0% to 100%.
             /// </summary>
+            [DataMember]
             [JsonProperty("rh2m")]
-            public string Rh2m { get; set; }
+            public string? Rh2m { get; set; }
 
             /// <summary>
             /// Unterklasse: fasst Windrichtung und Windgeschwindigkeit zusammen.
             /// </summary>
+            [DataMember]
             [JsonProperty("wind10m")]
-            public Wind Wind10m { get; set; }
+            public Wind? Wind10m { get; set; }
 
             /// <summary>
             /// Wetterbeschreibung:
@@ -211,8 +221,9 @@ namespace Vishnu_UserModules
             ///     snowday, snownight              Precipitation rate over 4mm/hr
             ///     rainsnowday, rainsnownight      Precipitation type to be ice pellets or freezing rain.
             /// </summary>
+            [DataMember]
             [JsonProperty("weather")]
-            public string Weather { get; set; }
+            public string? Weather { get; set; }
 
             /// <summary>
             /// Standard Konstruktor.
@@ -226,14 +237,14 @@ namespace Vishnu_UserModules
             /// <param name="context">Übertragungs-Kontext.</param>
             protected ForecastDataPoint(SerializationInfo info, StreamingContext context)
             {
-                this.Timepoint = (int)info.GetValue("Timepoint", typeof(int));
-                this.Cloudcover = (int)info.GetValue("Cloudcover", typeof(int));
-                this.Lifted_Index = (int)info.GetValue("Lifted_Index", typeof(int));
+                this.Timepoint = (int?)info.GetValue("Timepoint", typeof(int));
+                this.Cloudcover = (int?)info.GetValue("Cloudcover", typeof(int));
+                this.Lifted_Index = (int?)info.GetValue("Lifted_Index", typeof(int));
                 this.Prec_Type = info.GetString("Prec_Type");
-                this.Prec_Amount = (int)info.GetValue("Prec_Amount", typeof(int));
-                this.Temp2m = (int)info.GetValue("Temp2m", typeof(int));
+                this.Prec_Amount = (int?)info.GetValue("Prec_Amount", typeof(int));
+                this.Temp2m = (int?)info.GetValue("Temp2m", typeof(int));
                 this.Rh2m = info.GetString("Rh2m");
-                this.Wind10m = (Wind)info.GetValue("Wind10m", typeof(Wind));
+                this.Wind10m = (Wind?)info.GetValue("Wind10m", typeof(Wind));
                 this.Weather = info.GetString("Weather");
             }
 
@@ -269,7 +280,7 @@ namespace Vishnu_UserModules
                 stringBuilder.Append(delimiter + this.Prec_Amount.ToString());
                 stringBuilder.Append(delimiter + this.Temp2m.ToString());
                 stringBuilder.Append(delimiter + this.Rh2m);
-                stringBuilder.Append(delimiter + this.Wind10m.ToString());
+                stringBuilder.Append(delimiter + this.Wind10m?.ToString());
                 stringBuilder.Append(delimiter + this.Weather);
                 return stringBuilder.ToString();
             }
@@ -279,7 +290,7 @@ namespace Vishnu_UserModules
             /// </summary>
             /// <param name="obj">Der zu vergleichende ForecastDataPoint.</param>
             /// <returns>True, wenn der übergebene ForecastDataPoint inhaltlich gleich diesem ForecastDataPoint ist.</returns>
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 if (obj == null || this.GetType() != obj.GetType())
                 {
@@ -310,25 +321,29 @@ namespace Vishnu_UserModules
         /// <summary>
         /// Die ausgewählte Unter-Routine der Api http://www.7timer.info/bin/api.pl.
         /// </summary>
+        [DataMember]
         [JsonProperty("product")]
-        public string Product { get; set; }
+        public string? Product { get; set; }
 
         /// <summary>
         /// Datum und Stunde der Initialisierung.
         /// </summary>
+        [DataMember]
         [JsonProperty("init")]
-        public string Init { get; set; }
+        public string? Init { get; set; }
 
         /// <summary>
         /// Array von Wettervorhersagen für aufeinander folgende Zeitabschnitte.
         /// </summary>
+        [DataMember]
         [JsonProperty("dataseries")]
-        public List<ForecastDataPoint> Dataseries { get; set; }
+        public List<ForecastDataPoint>? Dataseries { get; set; }
 
         /// <summary>
         /// Liefert die Anzahl ForecastDataPoints.
         /// </summary>
-        public int RecordCount
+        [DataMember]
+        public int? RecordCount
         {
             get
             {
@@ -357,7 +372,7 @@ namespace Vishnu_UserModules
         {
             this.Product = info.GetString("Product");
             this.Product = info.GetString("Init");
-            this.Dataseries = (List<ForecastDataPoint>)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
+            this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
         }
 
         /// <summary>
@@ -398,7 +413,7 @@ namespace Vishnu_UserModules
         /// </summary>
         /// <param name="obj">Das zu vergleichende WeatherChecker_ReturnObject.</param>
         /// <returns>True, wenn das übergebene WeatherChecker_ReturnObject inhaltlich gleich diesem WeatherChecker_ReturnObject ist.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || this.GetType() != obj.GetType())
             {
@@ -408,14 +423,14 @@ namespace Vishnu_UserModules
             {
                 return true;
             }
-            WeatherChecker_ReturnObject subResultListContainer = obj as WeatherChecker_ReturnObject;
-            if (this.Dataseries.Count != subResultListContainer.Dataseries.Count)
+            WeatherChecker_ReturnObject subResultListContainer = (WeatherChecker_ReturnObject)obj;
+            if (this.Dataseries?.Count != subResultListContainer.Dataseries?.Count)
             {
                 return false;
             }
-            for (int i = 0; i < this.Dataseries.Count; i++)
+            for (int i = 0; i < this.Dataseries?.Count; i++)
             {
-                if (this.Dataseries[i] != subResultListContainer.Dataseries[i])
+                if (this.Dataseries[i] != subResultListContainer.Dataseries?[i])
                 {
                     return false;
                 }

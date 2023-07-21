@@ -1,13 +1,12 @@
-﻿using NetEti.Globals;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
+using System.ComponentModel;
+using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using Vishnu.Interchange;
 
-namespace Vishnu_UserModules
+namespace WeatherChecker
 {
     /// <summary>
     /// DemoChecker-Projekt für Vishnu.
@@ -36,12 +35,12 @@ namespace Vishnu_UserModules
         /// des Checkers geändert hat, muss aber zumindest aber einmal zum
         /// Schluss der Verarbeitung aufgerufen werden.
         /// </summary>
-        public event CommonProgressChangedEventHandler NodeProgressChanged;
+        public event ProgressChangedEventHandler? NodeProgressChanged;
 
         /// <summary>
         /// Rückgabe-Objekt des Checkers
         /// </summary>
-        public object ReturnObject
+        public object? ReturnObject
         {
             get
             {
@@ -60,16 +59,17 @@ namespace Vishnu_UserModules
         /// <param name="treeParameters">Für den gesamten Tree gültige Parameter oder null (z.Zt. unbenutzt).</param>
         /// <param name="source">Auslösendes TreeEvent (kann null sein).</param>
         /// <returns>True, False oder null</returns>
-        public bool? Run(object checkerParameters, TreeParameters treeParameters, TreeEvent source)
+        public bool? Run(object? checkerParameters, TreeParameters treeParameters, TreeEvent source)
         {
-            this.OnNodeProgressChanged(this.GetType().Name, 100, 0, ItemsTypes.items);
+            this.OnNodeProgressChanged(0);
             this._returnObject = null; // optional: in WeatherChecker_ReturnObject IDisposable implementieren und hier aufrufen.
             Thread.Sleep(200); // nur zu Demonstrationszwecken, damit man in Vishnu einen Verarbeitungsfortschritt sieht.
-            this.OnNodeProgressChanged(this.GetType().Name, 100, 50, ItemsTypes.items); // nur zu Demonstrationszwecken, kann wegfallen.
+            this.OnNodeProgressChanged(50); // nur zu Demonstrationszwecken, kann wegfallen.
             //--- Aufruf der Checker-Business-Logik ----------
-            bool? returnCode = this.Work(source);
+            bool? returnCode = Task.Run(() => this.Work(source)).Result;
+            // bool? returnCode = this.Work(source).Wait();
             //------------------------------------------------
-            this.OnNodeProgressChanged(this.GetType().Name, 100, 100, ItemsTypes.items); // erforderlich!
+            this.OnNodeProgressChanged(100); // erforderlich!
             return returnCode; // 
         }
 
@@ -114,9 +114,9 @@ namespace Vishnu_UserModules
 
         #endregion IDisposable Implementation
 
-        private object _returnObject = null;
+        private object? _returnObject = null;
 
-        private bool? Work(TreeEvent source)
+        private async Task<bool?> Work(TreeEvent source)
         {
             // Hier folgt die eigentliche Checker-Verarbeitung, die einen erweiterten boolean als Rückgabe
             // dieses Checkers ermittelt und das WeatherChecker_ReturnObject mit zusätzlichen Informationen
@@ -124,6 +124,29 @@ namespace Vishnu_UserModules
 
             Uri uri = new Uri(@"http://www.7timer.info/bin/api.pl?lon=6.7821&lat=51.2375&product=civil&output=json");
 
+            HttpClient client = new HttpClient();
+            client.Timeout = new TimeSpan(0, 0, 10);
+            HttpResponseMessage response;
+            string? responseJsonString = null;
+            WeatherChecker_ReturnObject? deserializedWeather = null;
+            try
+            {
+                response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                responseJsonString = await response.Content.ReadAsStringAsync();
+                deserializedWeather = JsonConvert.DeserializeObject<WeatherChecker_ReturnObject>(responseJsonString);
+            }
+            catch (HttpRequestException)
+            {
+                // Handle exception here
+                throw;
+                // return null;
+            }
+
+            this._returnObject = deserializedWeather;
+            return true;
+
+            /*
             HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
             HttpWebResponse response;
 			WeatherChecker_ReturnObject deserializedWeather = null;
@@ -142,14 +165,12 @@ namespace Vishnu_UserModules
             {
                 return null;
             }
-
-            this._returnObject = deserializedWeather;
-            return true;
+            */
         }
 
-        private void OnNodeProgressChanged(string itemsName, int countAll, int countSucceeded, ItemsTypes itemsType)
+        private void OnNodeProgressChanged(int progressPercentage)
         {
-            NodeProgressChanged?.Invoke(null, new CommonProgressChangedEventArgs(itemsName, countAll, countSucceeded, itemsType, null));
+            NodeProgressChanged?.Invoke(null, new ProgressChangedEventArgs(progressPercentage, null));
         }
     }
 }
