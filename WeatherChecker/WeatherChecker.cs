@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using Vishnu.Interchange;
@@ -116,17 +117,59 @@ namespace WeatherChecker
 
         private object? _returnObject = null;
 
+        private async Task<GeoLocation_ReturnObject?> GetGeoLocation()
+        {
+            Uri uri = new Uri(@"http://ip-api.com/json");
+            HttpClient client = new HttpClient();
+            client.Timeout = new TimeSpan(0, 0, 10);
+            HttpResponseMessage? response = null;
+            string? responseJsonString = null;
+            GeoLocation_ReturnObject? deserializedLocation = null;
+            try
+            {
+                response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                responseJsonString = await response.Content.ReadAsStringAsync();
+                deserializedLocation = JsonConvert.DeserializeObject<GeoLocation_ReturnObject>(responseJsonString);
+            }
+            catch (HttpRequestException)
+            {
+                // Handle exception here
+                throw;
+                // return null;
+            }
+            finally
+            {
+                response?.Dispose();
+                client?.Dispose();
+            }
+
+            return deserializedLocation;
+        }
+
         private async Task<bool?> Work(TreeEvent source)
         {
+            string? lon = "6.7821";  // fallback
+            string? lat = "51.2375"; // = Düsseldorf
+
+            GeoLocation_ReturnObject? geoLocation_ReturnObject = Task.Run(() => this.GetGeoLocation()).Result;
+
+            if (geoLocation_ReturnObject != null)
+            {
+                lon = geoLocation_ReturnObject.lon.ToString()?.Replace(',', '.');
+                lat = geoLocation_ReturnObject.lat.ToString()?.Replace(',', '.');
+
+            }
+
             // Hier folgt die eigentliche Checker-Verarbeitung, die einen erweiterten boolean als Rückgabe
             // dieses Checkers ermittelt und das WeatherChecker_ReturnObject mit zusätzlichen Informationen
             // aus dem nachfolgenden API-Aufruf der Seite www.7timer.info füllt.
 
-            Uri uri = new Uri(@"http://www.7timer.info/bin/api.pl?lon=6.7821&lat=51.2375&product=civil&output=json");
+            Uri uri = new Uri(@"http://www.7timer.info/bin/api.pl?lon=" + lon + "&lat=" + lat + "&product=civil&output=json");
 
             HttpClient client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 10);
-            HttpResponseMessage response;
+            HttpResponseMessage? response = null;
             string? responseJsonString = null;
             WeatherChecker_ReturnObject? deserializedWeather = null;
             try
@@ -142,7 +185,15 @@ namespace WeatherChecker
                 throw;
                 // return null;
             }
-
+            finally
+            {
+                response?.Dispose();
+                client?.Dispose();
+            }
+            if (deserializedWeather != null && geoLocation_ReturnObject != null)
+            {
+                deserializedWeather.Location = geoLocation_ReturnObject;
+            }
             this._returnObject = deserializedWeather;
             return true;
 

@@ -340,6 +340,12 @@ namespace WeatherChecker
         public List<ForecastDataPoint>? Dataseries { get; set; }
 
         /// <summary>
+        /// Enthält Ortsinformationen.
+        /// </summary>
+        [DataMember]
+        public GeoLocation_ReturnObject? Location { get; set; }
+
+        /// <summary>
         /// Liefert die Anzahl ForecastDataPoints.
         /// </summary>
         [DataMember]
@@ -373,6 +379,7 @@ namespace WeatherChecker
             this.Product = info.GetString("Product");
             this.Product = info.GetString("Init");
             this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
+            this.Location = (GeoLocation_ReturnObject?)info.GetValue("Location", typeof(GeoLocation_ReturnObject));
         }
 
         /// <summary>
@@ -385,6 +392,7 @@ namespace WeatherChecker
             info.AddValue("Product", this.Product);
             info.AddValue("Init", this.Init);
             info.AddValue("Dataseries", this.Dataseries);
+            info.AddValue("Location", this.Location);
         }
 
         /// <summary>
@@ -394,9 +402,10 @@ namespace WeatherChecker
         /// <returns>Alle öffentlichen Properties als ein String aufbereitet.</returns>
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder(this.Product);
+            StringBuilder stringBuilder = new StringBuilder(this.Location?.city + " " + this.Location?.regionName);
+            stringBuilder.Append(Environment.NewLine + this.Product);
             string delimiter = ", ";
-            stringBuilder.Append(delimiter + this.Init);
+            stringBuilder.Append(delimiter + this.Init + Environment.NewLine);
             if (this.Dataseries != null)
             {
                 foreach (ForecastDataPoint forecastDataPoint in this.Dataseries)
