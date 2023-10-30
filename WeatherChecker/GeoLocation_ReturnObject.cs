@@ -69,7 +69,7 @@ namespace WeatherChecker
         public double? lon { get; set; }
 
         /// <summary>
-        /// Timezone (tz)
+        /// Time zone (tz)
         /// </summary>
         [DataMember]
         public string? timezone { get; set; }
