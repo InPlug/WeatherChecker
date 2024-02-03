@@ -8,7 +8,7 @@
     <PackageId>NetEti.$(AssemblyName)</PackageId>
     <Title>$(AssemblyName) - Vishnu-Plugin: Ermittelt eine Wettervorhersage über http://www.7timer.info</Title>
     <Description>$(AssemblyName) - Vishnu-Plugin: Ermittelt eine Wettervorhersage über http://www.7timer.info</Description>
-    <Copyright>Copyright © $(Authors) 2022-2023</Copyright>
+    <Copyright>Copyright © $(Authors) 2022-$([System.DateTime]::Now.Year)</Copyright>
     <Authors>Erik Nagel</Authors>
     <Company>NetEti</Company>
     <PackageTags>NetEti Vishnu Plugin Weather Forecast Checker</PackageTags>
