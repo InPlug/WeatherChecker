@@ -19,11 +19,11 @@ namespace WeatherChecker
     /// <remarks>
     /// Autor: Erik Nagel
     ///
-    /// The weather forecasts come from http://www.7timer.info.
+    /// The weather forecasts come from https://www.7timer.info.
     /// Many thanks to Chenzhou Cui and his friends, who run this wonderful free weather-forecast site.
     /// Wiki on https://github.com/Yeqzids/7timer-issues/wiki/Wiki.
-    /// API on http://www.7timer.info/bin/api.pl?lon=6.7821&amp;lat=51.2375&amp;product=civil&amp;output=json.
-    /// Further I want to thank the developer-team who runs https://ip-api.com/ which provides a geolocation service,
+    /// API on https://www.7timer.info/bin/api.pl?lon=6.7821&amp;lat=51.2375&amp;product=civil&amp;output=json.
+    /// Further I want to thank the developer-team who runs http://ip-api.com/ which provides a geolocation service,
     /// that is free for non commercial usage.
     /// 
     /// 11.10.2020 Erik Nagel: erstellt
@@ -33,7 +33,7 @@ namespace WeatherChecker
         #region INodeChecker Implementation
 
         /// <summary>
-        /// Kann aufgerufen werden, wenn sich der Verarbeitungs-Fortschritt
+        /// Kann aufgerufen werden, wenn sich der Verarbeitungsfortschritt
         /// des Checkers geändert hat, muss aber zumindest aber einmal zum
         /// Schluss der Verarbeitung aufgerufen werden.
         /// </summary>
@@ -120,7 +120,29 @@ namespace WeatherChecker
 
         private async Task<GeoLocation_ReturnObject?> GetGeoLocation()
         {
-            Uri uri = new Uri(@"http://ip-api.com/json");
+            // Uri uri = new Uri(@"http://ip-api.com/json");
+            Uri uri = new Uri(@"https://get.geojs.io/v1/ip/geo.json");
+            /*
+            {
+                "country_code": "DE",
+                "country_code3": "DEU",
+                "continent_code": "EU",
+                "region": "North Rhine-Westphalia",
+                "latitude": "51.2402",
+                "longitude": "6.7785",
+                "accuracy": 5,
+                "country": "Germany",
+                "timezone": "Europe/Berlin",
+                "city": "Düsseldorf",
+                "organization": "AS3320 Deutsche Telekom AG",
+                "asn": 3320,
+                "ip": "87.146.129.31",
+                "area_code": "0",
+                "organization_name": "Deutsche Telekom AG"
+            }            
+            */
+            // Geolocation Standort Position Api 
+
             HttpClient client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 10);
             HttpResponseMessage? response = null;
@@ -157,16 +179,15 @@ namespace WeatherChecker
 
             if (geoLocation_ReturnObject != null)
             {
-                lon = geoLocation_ReturnObject.lon.ToString()?.Replace(',', '.');
-                lat = geoLocation_ReturnObject.lat.ToString()?.Replace(',', '.');
-
+                lon = geoLocation_ReturnObject.Longitude.ToString()?.Replace(',', '.');
+                lat = geoLocation_ReturnObject.Latitude.ToString()?.Replace(',', '.');
             }
 
             // Hier folgt die eigentliche Checker-Verarbeitung, die einen erweiterten boolean als Rückgabe
             // dieses Checkers ermittelt und das WeatherChecker_ReturnObject mit zusätzlichen Informationen
             // aus dem nachfolgenden API-Aufruf der Seite www.7timer.info füllt.
 
-            Uri uri = new Uri(@"http://www.7timer.info/bin/api.pl?lon=" + lon + "&lat=" + lat + "&product=civil&output=json");
+            Uri uri = new Uri(@"https://www.7timer.info/bin/api.pl?lon=" + lon + "&lat=" + lat + "&product=civil&output=json");
 
             HttpClient client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 10);

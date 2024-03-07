@@ -402,7 +402,7 @@ namespace WeatherChecker
         /// <returns>Alle öffentlichen Properties als ein String aufbereitet.</returns>
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder(this.Location?.city + " " + this.Location?.regionName);
+            StringBuilder stringBuilder = new StringBuilder(this.Location?.City + " " + this.Location?.Region);
             stringBuilder.Append(Environment.NewLine + this.Product);
             string delimiter = ", ";
             stringBuilder.Append(delimiter + this.Init + Environment.NewLine);
