@@ -6,125 +6,155 @@ using System.Text;
 namespace WeatherChecker
 {
     /// <summary>
-    /// Class to receive the return from the api-call to http://ip-api.com/json/.
-    /// 25.08.2023 Erik Nagel: created.
+    /// Class to receive the return from the api-call to https://www.geojs.io/.
+    /// Created by Erik Nagel and Bard (Gemini) on 04.03.2024.
+    /// 
+    /// 04.03.2024 Erik Nagel: erstellt
     /// </summary>
+    /// <remarks>
+    /// This class corresponds to the following JSON structure:
+    /// ```json
+    /// {
+    ///   "country_code": "DE",
+    ///   "country_code3": "DEU",
+    ///   "continent_code": "EU",
+    ///   "region": "North Rhine-Westphalia",
+    ///   "latitude": "51.2402",
+    ///   "longitude": "6.7785",
+    ///   "accuracy": 5,
+    ///   "country": "Germany",
+    ///   "timezone": "Europe/Berlin",
+    ///   "city": "Düsseldorf",
+    ///   "organization": "AS3320 Deutsche Telekom AG",
+    ///   "asn": 3320,
+    ///   "ip": "87.146.129.31",
+    ///   "area_code": "0",
+    ///   "organization_name": "Deutsche Telekom AG"
+    /// }
+    /// ```
+    /// </remarks>
     [DataContract]
     public class GeoLocation_ReturnObject
     {
-        // Root GeoLocation_ReturnObject = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-
         /// <summary>
-        /// Success or fail
+        /// Two-letter country code (ISO 3166-1 alpha-2).
         /// </summary>
         [DataMember]
-        public string? status { get; set; }
+        public string? CountryCode { get; set; }
 
         /// <summary>
-        /// Country name
+        /// Three-letter country code (ISO 3166-1 alpha-3).
         /// </summary>
         [DataMember]
-        public string? country { get; set; }
+        public string? CountryCode3 { get; set; }
 
         /// <summary>
-        /// wo-letter country code ISO 3166-1 alpha-2
+        /// Continent code.
         /// </summary>
         [DataMember]
-        public string? countryCode { get; set; }
+        public string? ContinentCode { get; set; }
 
         /// <summary>
-        /// Region/state short code (FIPS or ISO)
+        /// Region or state name.
         /// </summary>
         [DataMember]
-        public string? region { get; set; }
+        public string? Region { get; set; }
 
         /// <summary>
-        /// Region/state
+        /// Latitude coordinate.
         /// </summary>
         [DataMember]
-        public string? regionName { get; set; }
+        public double? Latitude { get; set; }
 
         /// <summary>
-        /// City
+        /// Longitude coordinate.
         /// </summary>
         [DataMember]
-        public string? city { get; set; }
+        public double? Longitude { get; set; }
 
         /// <summary>
-        /// Zip code
+        /// Reported accuracy of the location data.
         /// </summary>
         [DataMember]
-        public string? zip { get; set; }
+        public int? Accuracy { get; set; }
 
         /// <summary>
-        /// Latitude
+        /// Full country name.
         /// </summary>
         [DataMember]
-        public double? lat { get; set; }
+        public string? Country { get; set; }
 
         /// <summary>
-        /// Longitude
+        /// Time zone identifier.
         /// </summary>
         [DataMember]
-        public double? lon { get; set; }
+        public string? Timezone { get; set; }
 
         /// <summary>
-        /// Time zone (tz)
+        /// City name.
         /// </summary>
         [DataMember]
-        public string? timezone { get; set; }
+        public string? City { get; set; }
 
         /// <summary>
-        /// ISP name
+        /// Organization name associated with the IP address.
         /// </summary>
         [DataMember]
-        public string? isp { get; set; }
+        public string? Organization { get; set; }
 
         /// <summary>
-        /// Organization name
+        /// Autonomous System Number (ASN) associated with the IP address.
         /// </summary>
         [DataMember]
-        public string? org { get; set; }
+        public int? Asn { get; set; }
 
         /// <summary>
-        /// AS number and organization, separated by space (RIR). Empty for IP blocks not being announced in BGP tables.
+        /// IP address used for the geolocation lookup.
         /// </summary>
         [DataMember]
-        [JsonProperty("as")]
-        public string? company { get; set; }
+        public string? Ip { get; set; }
 
         /// <summary>
-        /// P used for the query
+        /// Area code associated with the IP address (may not be available).
         /// </summary>
         [DataMember]
-        public string? query { get; set; }
+        public string? AreaCode { get; set; }
 
         /// <summary>
-        /// Standard Konstruktor.
+        /// Full organization name associated with the IP address (may differ from Organization).
         /// </summary>
-        public GeoLocation_ReturnObject() { }
+        [DataMember]
+        public string? OrganizationName { get; set; }
+
+        /// <summary>
+        /// Standard constructor.
+        /// </summary>
+        public GeoLocation_ReturnObject()
+        {
+        }
 
         /// <summary>
         /// Deserialisierungs-Konstruktor.
         /// </summary>
         /// <param name="info">Property-Container.</param>
-        /// <param name="context">Übertragungs-Kontext.</param>
+        /// <param name="context">Übertragungskontext.</param>
         protected GeoLocation_ReturnObject(SerializationInfo info, StreamingContext context)
         {
-            this.status = info.GetString("status");
-            this.country = info.GetString("country");
-            this.countryCode = info.GetString("countryCode");
-            this.region = info.GetString("region");
-            this.regionName = info.GetString("regionName");
-            this.city = info.GetString("city");
-            this.zip = info.GetString("zip");
-            this.lat = (double?)info.GetValue("lat", typeof(double));
-            this.lon = (double?)info.GetValue("lon", typeof(double));
-            this.timezone = info.GetString("timezone");
-            this.isp = info.GetString("isp");
-            this.org = info.GetString("org");
-            this.company = info.GetString("company");
-            this.query = info.GetString("query");
+            this.CountryCode = info.GetString("CountryCode");
+            this.CountryCode3 = info.GetString("CountryCode3");
+            this.ContinentCode = info.GetString("ContinentCode");
+            this.Region = info.GetString("Region");
+            this.Latitude = (double?)info.GetValue("Latitude", typeof(double));
+            this.Longitude = (double?)info.GetValue("Longitude", typeof(double));
+            this.Accuracy = (int?)info.GetValue("Accuracy", typeof(int));
+            this.Country = info.GetString("Country");
+            this.Timezone = info.GetString("Timezone");
+            this.City = info.GetString("City");
+            this.Organization = info.GetString("Organization");
+            this.Asn = (int?)info.GetValue("Asn", typeof(int));
+            this.Ip = info.GetString("Ip");
+            this.AreaCode = info.GetString("AreaCode");
+            this.OrganizationName = info.GetString("OrganizationName");
         }
 
         /// <summary>
@@ -134,20 +164,21 @@ namespace WeatherChecker
         /// <param name="context">Serialisierungs-Kontext.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("status", this.status);
-            info.AddValue("country", this.country);
-            info.AddValue("countryCode", this.countryCode);
-            info.AddValue("region", this.region);
-            info.AddValue("regionName", this.regionName);
-            info.AddValue("city", this.city);
-            info.AddValue("zip", this.zip);
-            info.AddValue("lat", this.lat);
-            info.AddValue("lon", this.lon);
-            info.AddValue("timezone", this.timezone);
-            info.AddValue("isp", this.isp);
-            info.AddValue("org", this.org);
-            info.AddValue("company", this.company);
-            info.AddValue("query", this.query);
+            info.AddValue("CountryCode", this.CountryCode);
+            info.AddValue("CountryCode3", this.CountryCode3);
+            info.AddValue("ContinentCode", this.ContinentCode);
+            info.AddValue("Region", this.Region);
+            info.AddValue("Latitude", this.Latitude);
+            info.AddValue("Longitude", this.Longitude);
+            info.AddValue("Accuracy", this.Accuracy);
+            info.AddValue("Country", this.Country);
+            info.AddValue("Timezone", this.Timezone);
+            info.AddValue("City", this.City);
+            info.AddValue("Organization", this.Organization);
+            info.AddValue("Asn", this.Asn);
+            info.AddValue("Ip", this.Ip);
+            info.AddValue("AreaCode", this.AreaCode);
+            info.AddValue("OrganizationName", this.OrganizationName);
         }
 
         /// <summary>
@@ -157,21 +188,22 @@ namespace WeatherChecker
         /// <returns>Alle öffentlichen Properties als ein String aufbereitet.</returns>
         public override string ToString()
         {
-            StringBuilder stringBuilder = new StringBuilder("status: " + this.status);
+            StringBuilder stringBuilder = new StringBuilder("CountryCode: " + this.CountryCode);
             string delimiter = Environment.NewLine;
-            stringBuilder.Append(delimiter + "country: " + this.country);
-            stringBuilder.Append(delimiter + "countryCode: " + this.countryCode);
-            stringBuilder.Append(delimiter + "region: " + this.region);
-            stringBuilder.Append(delimiter + "regionName: " + this.regionName);
-            stringBuilder.Append(delimiter + "city: " + this.city);
-            stringBuilder.Append(delimiter + "zip: " + this.zip);
-            stringBuilder.Append(delimiter + "lat: " + this.lat);
-            stringBuilder.Append(delimiter + "lon: " + this.lon);
-            stringBuilder.Append(delimiter + "timezone: " + this.timezone);
-            stringBuilder.Append(delimiter + "isp: " + this.isp);
-            stringBuilder.Append(delimiter + "org: " + this.org);
-            stringBuilder.Append(delimiter + "company: " + this.company);
-            stringBuilder.Append(delimiter + "query: " + this.query);
+            stringBuilder.Append(delimiter + "CountryCode3: " + this.CountryCode3);
+            stringBuilder.Append(delimiter + "ContinentCode: " + this.ContinentCode);
+            stringBuilder.Append(delimiter + "Region: " + this.Region);
+            stringBuilder.Append(delimiter + "Latitude: " + this.Latitude);
+            stringBuilder.Append(delimiter + "Longitude: " + this.Longitude);
+            stringBuilder.Append(delimiter + "Accuracy: " + this.Accuracy);
+            stringBuilder.Append(delimiter + "Country: " + this.Country);
+            stringBuilder.Append(delimiter + "Timezone: " + this.Timezone);
+            stringBuilder.Append(delimiter + "City: " + this.City);
+            stringBuilder.Append(delimiter + "Organization: " + this.Organization);
+            stringBuilder.Append(delimiter + "Asn: " + this.Asn);
+            stringBuilder.Append(delimiter + "Ip: " + this.Ip);
+            stringBuilder.Append(delimiter + "AreaCode: " + this.AreaCode);
+            stringBuilder.Append(delimiter + "OrganizationName: " + this.OrganizationName);
 
             return stringBuilder.ToString();
         }
@@ -180,7 +212,8 @@ namespace WeatherChecker
         /// Vergleicht dieses Objekt mit einem übergebenen Objekt nach Inhalt.
         /// </summary>
         /// <param name="obj">Das zu vergleichende GeoLocation_ReturnObject.</param>
-        /// <returns>True, wenn das übergebene GeoLocation_ReturnObject inhaltlich gleich diesem GeoLocation_ReturnObject ist.</returns>
+        /// <returns>True, wenn das übergebene GeoLocation_ReturnObject inhaltlich
+        /// gleich diesem GeoLocation_ReturnObject ist.</returns>
         public override bool Equals(object? obj)
         {
             if (obj == null || this.GetType() != obj.GetType())

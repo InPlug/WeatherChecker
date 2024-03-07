@@ -36,6 +36,10 @@
     </Otherwise>
 	</Choose>
 
+	<ItemGroup>
+	  <Compile Remove="GeoLocation_ReturnObject_IP_API.cs" />
+	</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
