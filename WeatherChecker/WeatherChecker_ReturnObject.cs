@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
@@ -33,7 +32,6 @@ namespace WeatherChecker
                 /// Windrichtung: N, NE, E, SE, S, SW, W, NW.
                 /// </summary>
                 [DataMember]
-                [JsonProperty("direction")]
                 public string? Direction { get; set; }
 
                 /// <summary>
@@ -48,7 +46,6 @@ namespace WeatherChecker
                 ///     8	über 32.6m/s    (Orkan)
                 /// </summary>
                 [DataMember]
-                [JsonProperty("speed")]
                 public int? Speed { get; set; }
 
                 /// <summary>
@@ -124,11 +121,10 @@ namespace WeatherChecker
             }
 
             /// <summary>
-            /// Definiert den Aufsetz-Zeitpunkt.
+            /// Definiert den Aufsetz-Zeitpunkt ("2024-04-28T00:00").
             /// </summary>
             [DataMember]
-            [JsonProperty("timepoint")]
-            public int? Timepoint { get; set; }
+            public string? Timepoint { get; set; }
 
             /// <summary>
             /// Bewölkung:
@@ -143,7 +139,6 @@ namespace WeatherChecker
             ///     9	94%-100%
             /// </summary>
             [DataMember]
-            [JsonProperty("cloudcover")]
             public int? Cloudcover { get; set; }
 
             /// <summary>
@@ -158,14 +153,12 @@ namespace WeatherChecker
             ///      15	    Over 11
             /// </summary>
             [DataMember]
-            [JsonProperty("lifted_index")]
             public int? Lifted_Index { get; set; }
 
             /// <summary>
             /// Niederschlag: snow, rain, frzr (freezing rain), icep (ice pellets), none.
             /// </summary>
             [DataMember]
-            [JsonProperty("prec_type")]
             public string? Prec_Type { get; set; }
 
             /// <summary>
@@ -182,28 +175,24 @@ namespace WeatherChecker
             ///     9	Over 75mm/hr
             /// </summary>
             [DataMember]
-            [JsonProperty("prec_amount")]
             public int? Prec_Amount { get; set; }
 
             /// <summary>
             /// Temperatur (in 2 m Höhe über dem Erdboden gemessen): -76 to 60: -76C to +60C.
             /// </summary>
             [DataMember]
-            [JsonProperty("temp2m")]
-            public int? Temp2m { get; set; }
+            public string? Temperature { get; set; }
 
             /// <summary>
             /// Relative Luftfeuchtigkeit (in 2 m Höhe über dem Erdboden gemessen): 0 to 100: 0% to 100%.
             /// </summary>
             [DataMember]
-            [JsonProperty("rh2m")]
-            public string? Rh2m { get; set; }
+            public string? Humidity { get; set; }
 
             /// <summary>
             /// Unterklasse: fasst Windrichtung und Windgeschwindigkeit zusammen.
             /// </summary>
             [DataMember]
-            [JsonProperty("wind10m")]
             public Wind? Wind10m { get; set; }
 
             /// <summary>
@@ -222,7 +211,6 @@ namespace WeatherChecker
             ///     rainsnowday, rainsnownight      Precipitation type to be ice pellets or freezing rain.
             /// </summary>
             [DataMember]
-            [JsonProperty("weather")]
             public string? Weather { get; set; }
 
             /// <summary>
@@ -237,13 +225,13 @@ namespace WeatherChecker
             /// <param name="context">Übertragungs-Kontext.</param>
             protected ForecastDataPoint(SerializationInfo info, StreamingContext context)
             {
-                this.Timepoint = (int?)info.GetValue("Timepoint", typeof(int));
+                this.Timepoint = info.GetString("Timepoint");
                 this.Cloudcover = (int?)info.GetValue("Cloudcover", typeof(int));
                 this.Lifted_Index = (int?)info.GetValue("Lifted_Index", typeof(int));
                 this.Prec_Type = info.GetString("Prec_Type");
                 this.Prec_Amount = (int?)info.GetValue("Prec_Amount", typeof(int));
-                this.Temp2m = (int?)info.GetValue("Temp2m", typeof(int));
-                this.Rh2m = info.GetString("Rh2m");
+                this.Temperature = info.GetString("Temperature");
+                this.Humidity = info.GetString("Rh2m");
                 this.Wind10m = (Wind?)info.GetValue("Wind10m", typeof(Wind));
                 this.Weather = info.GetString("Weather");
             }
@@ -260,8 +248,8 @@ namespace WeatherChecker
                 info.AddValue("Lifted_Index", this.Lifted_Index);
                 info.AddValue("Prec_Type", this.Prec_Type);
                 info.AddValue("Prec_Amount", this.Prec_Amount);
-                info.AddValue("Temp2m", this.Temp2m);
-                info.AddValue("Rh2m", this.Rh2m);
+                info.AddValue("Temperature", this.Temperature);
+                info.AddValue("Humidity", this.Humidity);
                 info.AddValue("Wind10m", this.Wind10m);
                 info.AddValue("Weather", this.Weather);
             }
@@ -272,14 +260,14 @@ namespace WeatherChecker
             /// <returns>Dieses Objekt.ToString().</returns>
             public override string ToString()
             {
-                StringBuilder stringBuilder = new StringBuilder(this.Timepoint.ToString());
+                StringBuilder stringBuilder = new StringBuilder(this.Timepoint?.ToString());
                 string delimiter = ", ";
                 stringBuilder.Append(delimiter + this.Cloudcover.ToString());
                 stringBuilder.Append(delimiter + this.Lifted_Index.ToString());
                 stringBuilder.Append(delimiter + this.Prec_Type);
                 stringBuilder.Append(delimiter + this.Prec_Amount.ToString());
-                stringBuilder.Append(delimiter + this.Temp2m.ToString());
-                stringBuilder.Append(delimiter + this.Rh2m);
+                stringBuilder.Append(delimiter + this.Temperature);
+                stringBuilder.Append(delimiter + this.Humidity);
                 stringBuilder.Append(delimiter + this.Wind10m?.ToString());
                 stringBuilder.Append(delimiter + this.Weather);
                 return stringBuilder.ToString();
@@ -319,24 +307,15 @@ namespace WeatherChecker
         }
 
         /// <summary>
-        /// Die ausgewählte Unter-Routine der Api http://www.7timer.info/bin/api.pl.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("product")]
-        public string? Product { get; set; }
-
-        /// <summary>
         /// Datum und Stunde der Initialisierung.
         /// </summary>
         [DataMember]
-        [JsonProperty("init")]
-        public string? Init { get; set; }
+        public string? Creation { get; set; }
 
         /// <summary>
         /// Array von Wettervorhersagen für aufeinander folgende Zeitabschnitte.
         /// </summary>
         [DataMember]
-        [JsonProperty("dataseries")]
         public List<ForecastDataPoint>? Dataseries { get; set; }
 
         /// <summary>
@@ -366,6 +345,7 @@ namespace WeatherChecker
         /// </summary>
         public WeatherChecker_ReturnObject()
         {
+            this.Creation = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
             this.Dataseries = new List<ForecastDataPoint>();
         }
 
@@ -376,8 +356,7 @@ namespace WeatherChecker
         /// <param name="context">Übertragungs-Kontext.</param>
         protected WeatherChecker_ReturnObject(SerializationInfo info, StreamingContext context)
         {
-            this.Product = info.GetString("Product");
-            this.Product = info.GetString("Init");
+            this.Creation = info.GetString("Creation");
             this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
             this.Location = (GeoLocation_ReturnObject?)info.GetValue("Location", typeof(GeoLocation_ReturnObject));
         }
@@ -389,8 +368,7 @@ namespace WeatherChecker
         /// <param name="context">Serialisierungs-Kontext.</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Product", this.Product);
-            info.AddValue("Init", this.Init);
+            info.AddValue("Creation", this.Creation);
             info.AddValue("Dataseries", this.Dataseries);
             info.AddValue("Location", this.Location);
         }
@@ -403,9 +381,8 @@ namespace WeatherChecker
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder(this.Location?.City + " " + this.Location?.Region);
-            stringBuilder.Append(Environment.NewLine + this.Product);
             string delimiter = ", ";
-            stringBuilder.Append(delimiter + this.Init + Environment.NewLine);
+            stringBuilder.Append(delimiter + this.Creation + Environment.NewLine);
             if (this.Dataseries != null)
             {
                 foreach (ForecastDataPoint forecastDataPoint in this.Dataseries)
