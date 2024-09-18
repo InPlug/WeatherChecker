@@ -21,14 +21,15 @@ namespace WeatherChecker
     /// Autor: Erik Nagel
     ///
     /// The weather forecasts come from https://open-meteo.com. Thanks to the team.
-    /// Further I want to thank the developer-team who runs http://ip-api.com/ which provides a geolocation service,
-    /// that is free for non commercial usage.
+    /// Further I want to thank the developer-teams of https://get.geojs.io/v1/ip/geo.json
+    /// and http://ip-api.com/ who provide geolocation services, which are free for non commercial usage.
     /// 
     /// (The weather forecasts formerly came from https://www.7timer.info.
     ///  Many thanks to Chenzhou Cui and his friends, who runned this wonderful free weather-forecast site)
     /// 
     /// 11.10.2020 Erik Nagel: erstellt
     /// 26.04.2024 Erik Nagel: auf open.meteo.com geaendert.
+    /// 14.09.2024 Erik Nagel: für die zusätzliche Darstellung von Einzelinformationen erweitert.
     /// </remarks>
     public class WeatherChecker : INodeChecker, IDisposable
     {
@@ -175,7 +176,7 @@ namespace WeatherChecker
         private async Task<bool?> Work(TreeEvent source)
         {
             string? longitude = "6.7735";  // fallback
-            string? latitude = "51.2277"; // = Düsseldorf
+            string? latitude = "51.2277";  // = Düsseldorf
 
             GeoLocation_ReturnObject? geoLocation_ReturnObject = Task.Run(() => this.GetGeoLocation()).Result;
 
@@ -191,8 +192,33 @@ namespace WeatherChecker
 
             // Uri uri = new Uri(@"https://www.7timer.info/bin/api.pl?lon=" + longitude + "&lat=" + latitude + "&product=civil&output=json");
             Uri uri = new Uri("https://api.open-meteo.com/v1/forecast"
-                          + "?latitude=" + latitude + "&longitude=" + longitude
-                          + "&timezone=Europe%2FBerlin&forecast_days=7&daily=sunrise,sunset&hourly=temperature_2m,relative_humidity_2m,weather_code");
+                          + "?latitude=" + latitude
+                          + "&longitude=" + longitude
+                          + "&timezone=Europe%2FBerlin"
+                          + "&forecast_days=7"
+                          + "&hourly=temperature_2m"
+                          + ",relative_humidity_2m"
+                          + ",apparent_temperature"
+                          + ",precipitation_probability"
+                          + ",rain"
+                          + ",showers"
+                          + ",snowfall"
+                          + ",weather_code"
+                          + ",cloud_cover"
+                          + ",surface_pressure"
+                          + ",wind_speed_10m"
+                          + ",wind_direction_10m"
+                          + ",wind_gusts_10m"
+                          + "&daily=temperature_2m_max"
+                          + ",temperature_2m_min"
+                          + ",apparent_temperature_min"
+                          + ",apparent_temperature_max"
+                          + ",sunrise"
+                          + ",sunset"
+                          + ",sunshine_duration"
+                          + ",rain_sum"
+                          + ",showers_sum"
+                          + ",snowfall_sum");
 
             HttpClient client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 10);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,11 +18,11 @@ namespace WeatherChecker
         /// <summary>
         /// The unit of time used for the timestamps in the hourly data (e.g., "ISO8601").
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "time")]
         public string? Time { get; set; }
 
         /// <summary>
-        /// The unit of measurement for the 2-meter temperature data (e.g., "celsius").
+        /// The unit of measurement for the 2-meters temperature data (e.g., "celsius").
         /// </summary>
         [DataMember(Name = "temperature_2m")]
         public string? Temperature2m { get; set; }
@@ -33,10 +34,76 @@ namespace WeatherChecker
         public string? RelativeHumidity2m { get; set; }
 
         /// <summary>
-        /// The unit of measurement for the weather code data.
+        /// The unit of measurement for the apparent temperature data (e.g., "celsius").
+        /// </summary>
+        [DataMember(Name = "apparent_temperature")]
+        public string? ApparentTemperature { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the precipitation probability data (e.g., "%").
+        /// </summary>
+        [DataMember(Name = "precipitation_probability")]
+        public string? PrecipitationProbability { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the rain data (e.g., "mm").
+        /// </summary>
+        [DataMember(Name = "rain")]
+        public string? Rain { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the showers data (e.g., "mm").
+        /// </summary>
+        [DataMember(Name = "showers")]
+        public string? Showers { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the snowfall data (e.g., "cm").
+        /// </summary>
+        [DataMember(Name = "snowfall")]
+        public string? Snowfall { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the snow depth data (e.g., "m").
+        /// </summary>
+        [DataMember(Name = "snow_depth")]
+        public string? SnowDepth { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the weather code data (e.g., "wmo code").
         /// </summary>
         [DataMember(Name = "weather_code")]
         public string? WeatherCode { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the surface pressure data (e.g., "hPa").
+        /// </summary>
+        [DataMember(Name = "surface_pressure")]
+        public string? SurfacePressure { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the cloud cover data (e.g., "%").
+        /// </summary>
+        [DataMember(Name = "cloud_cover")]
+        public string? CloudCover { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the 10-meters wind speed data (e.g., "km/h").
+        /// </summary>
+        [DataMember(Name = "wind_speed_10m")]
+        public string? WindSpeed10m { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the 10-meters wind direction data (e.g., "%").
+        /// </summary>
+        [DataMember(Name = "wind_direction_10m")]
+        public string? WindDirection10m { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the 10-meters wind gusts data (e.g., "km/h").
+        /// </summary>
+        [DataMember(Name = "wind_gusts_10m")]
+        public string? WindGusts10m { get; set; }
 
         /// <summary>
         /// Standard constructor, necessary for json-deserialization.
@@ -55,7 +122,7 @@ namespace WeatherChecker
         /// <summary>
         /// List of timestamps for each data point (same unit as specified in HourlyUnits.Time).
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "time")]
         public List<string>? Time { get; set; }
 
         /// <summary>
@@ -65,16 +132,76 @@ namespace WeatherChecker
         public List<double>? Temperature2m { get; set; }
 
         /// <summary>
-        /// List of relative humidity values at 2 meters (in the unit specified by HourlyUnits.RelativeHumidity2m).
+        /// List of relative humidity values at 2 meters (from HourlyUnits.RelativeHumidity2m).
         /// </summary>
         [DataMember(Name = "relative_humidity_2m")]
         public List<int>? RelativeHumidity2m { get; set; }
+
+        /// <summary>
+        /// List of apparent temperature values (from HourlyUnits.ApparentTemperature).
+        /// </summary>
+        [DataMember(Name = "apparent_temperature")]
+        public List<double>? ApparentTemperature { get; set; }
+
+        /// <summary>
+        /// List of precipitation probability values (from HourlyUnits.PrecipitationProbability).
+        /// </summary>
+        [DataMember(Name = "precipitation_probability")]
+        public List<int>? PrecipitationProbability { get; set; }
+
+        /// <summary>
+        /// List of rain values (from HourlyUnits.Rain).
+        /// </summary>
+        [DataMember(Name = "rain")]
+        public List<double>? Rain { get; set; }
+
+        /// <summary>
+        /// List of showers values (from HourlyUnits.Showers).
+        /// </summary>
+        [DataMember(Name = "showers")]
+        public List<double>? Showers { get; set; }
+
+        /// <summary>
+        /// List of snowfall values (from HourlyUnits.Snowfall).
+        /// </summary>
+        [DataMember(Name = "snowfall")]
+        public List<double>? Snowfall { get; set; }
 
         /// <summary>
         /// List of weather codes for each data point.
         /// </summary>
         [DataMember(Name = "weather_code")]
         public List<int>? WeatherCode { get; set; }
+
+        /// <summary>
+        /// List of surface pressure data (from HourlyUnits.SurfacePressure).
+        /// </summary>
+        [DataMember(Name = "surface_pressure")]
+        public List<double>? SurfacePressure { get; set; }
+
+        /// <summary>
+        /// List of cloud cover data (from HourlyUnits.CloudCover).
+        /// </summary>
+        [DataMember(Name = "cloud_cover")]
+        public List<int>? CloudCover { get; set; }
+
+        /// <summary>
+        /// List of 10-meters wind speed data (from HourlyUnits.SurfacePressure).
+        /// </summary>
+        [DataMember(Name = "wind_speed_10m")]
+        public List<double>? WindSpeed10m { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the 10-meters wind direction data (e.g., "%").
+        /// </summary>
+        [DataMember(Name = "wind_direction_10m")]
+        public List<int>? WindDirection10m { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the 10-meters wind gusts data (e.g., "km/h").
+        /// </summary>
+        [DataMember(Name = "wind_gusts_10m")]
+        public List<double>? WindGusts10m { get; set; }
 
         /// <summary>
         /// Standard constructor, necessary for json-deserialization.
@@ -93,7 +220,17 @@ namespace WeatherChecker
             Time = (List<string>?)info.GetValue("Time", typeof(List<string>));
             Temperature2m = (List<double>?)info.GetValue("Temperature2m", typeof(List<double>));
             RelativeHumidity2m = (List<int>?)info.GetValue("RelativeHumidity2m", typeof(List<int>));
+            ApparentTemperature = (List<double>?)info.GetValue("ApparentTemperature", typeof(List<double>));
+            PrecipitationProbability = (List<int>?)info.GetValue("PrecipitationProbability", typeof(List<int>));
+            Rain = (List<double>?)info.GetValue("Rain", typeof(List<double>));
+            Showers = (List<double>?)info.GetValue("Showers", typeof(List<double>));
+            Snowfall = (List<double>?)info.GetValue("Snowfall", typeof(List<double>));
             WeatherCode = (List<int>?)info.GetValue("WeatherCode", typeof(List<int>));
+            SurfacePressure = (List<double>?)info.GetValue("SurfacePressure", typeof(List<double>));
+            CloudCover = (List<int>?)info.GetValue("CloudCover", typeof(List<int>));
+            WindSpeed10m = (List<double>?)info.GetValue("WindSpeed10m", typeof(List<double>));
+            WindDirection10m = (List<int>?)info.GetValue("WindDirection10m", typeof(List<int>));
+            WindGusts10m = (List<double>?)info.GetValue("WindGusts10m", typeof(List<double>));
         }
 
         /// <summary>
@@ -106,7 +243,17 @@ namespace WeatherChecker
             info.AddValue("Time", Time);
             info.AddValue("Temperature2m", Temperature2m);
             info.AddValue("RelativeHumidity2m", RelativeHumidity2m);
+            info.AddValue("ApparentTemperature", ApparentTemperature);
+            info.AddValue("PrecipitationProbability", PrecipitationProbability);
+            info.AddValue("Rain", Rain);
+            info.AddValue("Showers", Showers);
+            info.AddValue("Snowfall", Snowfall);
             info.AddValue("WeatherCode", WeatherCode);
+            info.AddValue("SurfacePressure", SurfacePressure);
+            info.AddValue("CloudCover", CloudCover);
+            info.AddValue("WindSpeed10m", WindSpeed10m);
+            info.AddValue("WindDirection10m", WindDirection10m);
+            info.AddValue("WindGusts10m", WindGusts10m);
         }
 
         /// <summary>
@@ -115,8 +262,20 @@ namespace WeatherChecker
         /// <returns>This object.ToString().</returns>
         public override string ToString()
         {
-            return $"Time: {string.Join(", ", Time?? new List<string>())}, Temperature2m: {string.Join(", ", Temperature2m?? new List<double>())}"
-                 + $", RelativeHumidity2m: {string.Join(", ", RelativeHumidity2m?? new List<int>())}, WeatherCode: {string.Join(", ", WeatherCode?? new List<int>())}";
+            return $"Time: {string.Join(", ", Time ?? new List<string>())}"
+                 + $", Temperature2m: {string.Join(", ", Temperature2m ?? new List<double>())}"
+                 + $", RelativeHumidity2m: {string.Join(", ", RelativeHumidity2m ?? new List<int>())}"
+                 + $", ApparentTemperature: {string.Join(", ", ApparentTemperature ?? new List<double>())}"
+                 + $", PrecipitationProbability: {string.Join(", ", PrecipitationProbability ?? new List<int>())}"
+                 + $", Rain: {string.Join(", ", Rain ?? new List<double>())}"
+                 + $", Showers: {string.Join(", ", Showers ?? new List<double>())}"
+                 + $", Snowfall: {string.Join(", ", Snowfall ?? new List<double>())}"
+                 + $", WeatherCode: {string.Join(", ", WeatherCode ?? new List<int>())}"
+                 + $", SurfacePressure: {string.Join(", ", SurfacePressure ?? new List<double>())}"
+                 + $", CloudCover: {string.Join(", ", CloudCover ?? new List<int>())}"
+                 + $", WindSpeed10m: {string.Join(", ", WindSpeed10m ?? new List<double>())}"
+                 + $", WindDirection10m: {string.Join(", ", WindDirection10m ?? new List<int>())}"
+                 + $", WindGusts10m: {string.Join(", ", WindGusts10m ?? new List<double>())}";
         }
 
         /// <summary>
@@ -165,16 +324,52 @@ namespace WeatherChecker
         public string? Time { get; set; }
 
         /// <summary>
+        /// The unit of measurement for the 2-meters maximum temperature data (e.g., "celsius").
+        /// </summary>
+        [DataMember(Name = "temperature_2m_max")]
+        public string? Temperature2mMax { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the maximum apparent temperature data (e.g., "celsius").
+        /// </summary>
+        [DataMember(Name = "apparent_temperature_max")]
+        public string? ApparentTemperatureMax { get; set; }
+
+        /// <summary>
         /// The unit of time used for sunrise and sunset times (e.g., "ISO8601").
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "sunrise")]
         public string? Sunrise { get; set; }
 
         /// <summary>
         /// The unit of time used for sunrise and sunset times (e.g., "ISO8601").
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "sunset")]
         public string? Sunset { get; set; }
+
+        /// <summary>
+        /// The unit of time used for sunshine duration (e.g., "s").
+        /// </summary>
+        [DataMember(Name = "sunshine_duration")]
+        public string? SunshineDuration { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the rain sum data (e.g., "mm").
+        /// </summary>
+        [DataMember(Name = "rain_sum")]
+        public string? RainSum { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the showers sum data (e.g., "mm").
+        /// </summary>
+        [DataMember(Name = "showers_sum")]
+        public string? ShowersSum { get; set; }
+
+        /// <summary>
+        /// The unit of measurement for the snowfall sum data (e.g., "cm").
+        /// </summary>
+        [DataMember(Name = "snowfall_sum")]
+        public string? SnowfallSum { get; set; }
 
         /// <summary>
         /// Standard constructor, necessary for json-deserialization.
@@ -193,20 +388,56 @@ namespace WeatherChecker
         /// <summary>
         /// List of timestamps for each data point (same unit as specified in DailyUnits.Time).
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "time")]
         public List<string>? Time { get; set; }
+
+        /// <summary>
+        /// List of 2-meter temperature maximum values in the specified unit (from DailyUnits.Temperature2mMax).
+        /// </summary>
+        [DataMember(Name = "temperature_2m_max")]
+        public List<double>? Temperature2mMax { get; set; }
+
+        /// <summary>
+        /// List of apparent temperature maximum values (from DailyUnits.ApparentTemperatureMax).
+        /// </summary>
+        [DataMember(Name = "apparent_temperature_max")]
+        public List<double>? ApparentTemperatureMax { get; set; }
 
         /// <summary>
         /// List of sunrise times for each day (in the unit specified by DailyUnits.Sunrise).
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "sunrise")]
         public List<string>? Sunrise { get; set; }
 
         /// <summary>
         /// List of sunset times for each day (in the unit specified by DailyUnits.Sunset).
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "sunset")]
         public List<string>? Sunset { get; set; }
+
+        /// <summary>
+        /// List of sunshine duration times for each day (in the unit specified by DailyUnits.SunshineDuration).
+        /// </summary>
+        [DataMember(Name = "sunshine_duration")]
+        public List<string>? SunshineDuration { get; set; }
+
+        /// <summary>
+        /// List of rain sum values (from DailyUnits.RainSum).
+        /// </summary>
+        [DataMember(Name = "rain_sum")]
+        public List<double>? RainSum { get; set; }
+
+        /// <summary>
+        /// List of showers sum values (from DailyUnits.ShowersSum).
+        /// </summary>
+        [DataMember(Name = "showers_sum")]
+        public List<double>? ShowersSum { get; set; }
+
+        /// <summary>
+        /// List of snowfall sum values (from DailyUnits.SnowfallSum).
+        /// </summary>
+        [DataMember(Name = "snowfall_sum")]
+        public List<double>? SnowfallSum { get; set; }
 
         /// <summary>
         /// Standard constructor, necessary for json-deserialization.
@@ -223,8 +454,14 @@ namespace WeatherChecker
         protected Daily(SerializationInfo info, StreamingContext context)
         {
             Time = (List<string>?)info.GetValue("Time", typeof(List<string>));
+            Temperature2mMax = (List<double>?)info.GetValue("Temperature2mMax", typeof(List<double>));
+            ApparentTemperatureMax = (List<double>?)info.GetValue("ApparentTemperatureMax", typeof(List<double>));
             Sunrise = (List<string>?)info.GetValue("Sunrise", typeof(List<string>));
             Sunset = (List<string>?)info.GetValue("Sunset", typeof(List<string>));
+            SunshineDuration = (List<string>?)info.GetValue("SunshineDuration", typeof(List<string>));
+            RainSum = (List<double>?)info.GetValue("RainSum", typeof(List<double>));
+            ShowersSum = (List<double>?)info.GetValue("ShowersSum", typeof(List<double>));
+            SnowfallSum = (List<double>?)info.GetValue("SnowfallSum", typeof(List<double>));
         }
 
         /// <summary>
@@ -235,8 +472,14 @@ namespace WeatherChecker
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Time", Time);
+            info.AddValue("Temperature2mMax", Temperature2mMax);
+            info.AddValue("ApparentTemperatureMax", ApparentTemperatureMax);
             info.AddValue("Sunrise", Sunrise);
             info.AddValue("Sunset", Sunset);
+            info.AddValue("SunshineDuration", SunshineDuration);
+            info.AddValue("RainSum", RainSum);
+            info.AddValue("ShowersSum", ShowersSum);
+            info.AddValue("SnowfallSum", SnowfallSum);
         }
 
         /// <summary>
@@ -245,8 +488,15 @@ namespace WeatherChecker
         /// <returns>This object.ToString().</returns>
         public override string ToString()
         {
-            return $"Time: {string.Join(", ", Time?? new List<string>())}, Sunrise: {string.Join(", ", Sunrise?? new List<string>())}"
-                + $", Sunset: {string.Join(", ", Sunset ?? new List<string>())}";
+            return $"Time: {string.Join(", ", Time ?? new List<string>())}"
+                 + $", Temperature2mMax: {string.Join(", ", Temperature2mMax ?? new List<double>())}"
+                 + $", ApparentTemperatureMax: {string.Join(", ", ApparentTemperatureMax ?? new List<double>())}"
+                 + $", Sunrise: {string.Join(", ", Sunrise ?? new List<string>())}"
+                 + $", Sunset: {string.Join(", ", Sunset ?? new List<string>())}"
+                 + $", SunshineDuration: {string.Join(", ", SunshineDuration ?? new List<string>())}"
+                 + $", RainSum: {string.Join(", ", RainSum ?? new List<double>())}"
+                 + $", ShowersSum: {string.Join(", ", ShowersSum ?? new List<double>())}"
+                 + $", SnowfallSum: {string.Join(", ", SnowfallSum ?? new List<double>())}";
         }
 
         /// <summary>
@@ -291,13 +541,13 @@ namespace WeatherChecker
         /// <summary>
         /// Geographic latitude of the requested location.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "latitude")]
         public double? Latitude { get; set; }
 
         /// <summary>
         /// Geographic longitude of the requested location.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "longitude")]
         public double? Longitude { get; set; }
 
         /// <summary>
@@ -327,7 +577,7 @@ namespace WeatherChecker
         /// <summary>
         /// Elevation of the requested location (in meters).
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "elevation")]
         public double? Elevation { get; set; }
 
         /// <summary>
@@ -339,7 +589,7 @@ namespace WeatherChecker
         /// <summary>
         /// Hourly weather data points.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "hourly")]
         public Hourly? Hourly { get; set; }
 
         /// <summary>
@@ -351,7 +601,7 @@ namespace WeatherChecker
         /// <summary>
         /// Daily weather data points.
         /// </summary>
-        [DataMember]
+        [DataMember(Name = "daily")]
         public Daily? Daily { get; set; }
 
         /// <summary>
@@ -407,9 +657,17 @@ namespace WeatherChecker
         /// <returns>This object.ToString().</returns>
         public override string ToString()
         {
-            return $"Latitude: {Latitude}, Longitude: {Longitude}, GenerationTimeMs: {GenerationTimeMs}"
-                + $", UTCOffsetSeconds: {UtcOffsetSeconds}, Timezone: {Timezone}, TimezoneAbbreviation: {TimezoneAbbreviation}"
-                + $", Elevation: {Elevation}, HourlyUnits: {HourlyUnits}, Hourly: {Hourly}, DailyUnits: {DailyUnits}, Daily: {Daily}";
+            return $"Latitude: {Latitude}"
+                 + $", Longitude: {Longitude}"
+                 + $", GenerationTimeMs: {GenerationTimeMs}"
+                 + $", UTCOffsetSeconds: {UtcOffsetSeconds}"
+                 + $", Timezone: {Timezone}"
+                 + $", TimezoneAbbreviation: {TimezoneAbbreviation}"
+                 + $", Elevation: {Elevation}"
+                 + $", HourlyUnits: {HourlyUnits}"
+                 + $", Hourly: {Hourly}"
+                 + $", DailyUnits: {DailyUnits}"
+                 + $", Daily: {Daily}";
         }
 
         /// <summary>
@@ -443,12 +701,19 @@ namespace WeatherChecker
             return (this.ToString()).GetHashCode();
         }
 
-        internal static WeatherChecker_ReturnObject? ConvertToWeatherChecker_ReturnObject(WeatherChecker_OpenMeteo_ReturnObject? deserializedWeather, GeoLocation_ReturnObject? geoLocation_ReturnObject)
+        internal static WeatherChecker_ReturnObject? ConvertToWeatherChecker_ReturnObject(
+            WeatherChecker_OpenMeteo_ReturnObject? deserializedWeather, GeoLocation_ReturnObject? geoLocation_ReturnObject)
         {
             WeatherChecker_ReturnObject? weatherChecker_ReturnObject = new WeatherChecker_ReturnObject();
             if (geoLocation_ReturnObject == null) return weatherChecker_ReturnObject;
             weatherChecker_ReturnObject.Location = geoLocation_ReturnObject;
-            if (deserializedWeather == null || deserializedWeather.Hourly == null || deserializedWeather.Daily == null) return weatherChecker_ReturnObject;
+            if (deserializedWeather == null || deserializedWeather.Hourly == null || deserializedWeather.Daily == null)
+                return weatherChecker_ReturnObject;
+            weatherChecker_ReturnObject.Location.Elevation = deserializedWeather.Elevation;
+            // WeatherChecker_OpenMeteo_ReturnObject enthält pro Stunde einen Datenpunkt, WeatherChecker_ReturnObject
+            // nur pro alle drei Stunden.
+            // Deshalb wird in den nächsten beiden Loops nur jeder dritte Datenpunkt des WeatherChecker_OpenMeteo_ReturnObjects
+            // referenziert.
             for (int i = 0; i < deserializedWeather.Hourly.Time?.Count; i+=3)
             {
                 string timeString = deserializedWeather.Hourly.Time[i];
@@ -459,36 +724,63 @@ namespace WeatherChecker
             for (int i = 0; i < weatherChecker_ReturnObject.Dataseries?.Count; i++)
             {
                 int j = i * 3;
-                string timePoint = weatherChecker_ReturnObject.Dataseries[i].Timepoint ?? throw new ArgumentNullException("Timepoint");
-                ConversionHelpers.FetchSunriseAndSunset(deserializedWeather, timePoint, out string sunriseString, out string sunsetString);
+                string timePoint = weatherChecker_ReturnObject.Dataseries[i].Timepoint
+                    ?? throw new ArgumentNullException("Timepoint");
+                int dailyIndex = FindDailyIndex(deserializedWeather, timePoint)
+                    ?? throw new ArgumentNullException("DailyIndex");
+                string sunriseString = deserializedWeather.Daily.Sunrise?[dailyIndex] ?? throw new ArgumentNullException("Sunrise");
+                string sunsetString = deserializedWeather.Daily.Sunset?[dailyIndex] ?? throw new ArgumentNullException("Sunset");
+                // ConversionHelpers.FetchSunriseAndSunset(deserializedWeather, timePoint, out string sunriseString,
+                // out string sunsetString);
+                weatherChecker_ReturnObject.Dataseries[i].Sunrise = sunriseString;
+                weatherChecker_ReturnObject.Dataseries[i].Sunset = sunsetString;
+                weatherChecker_ReturnObject.Dataseries[i].SunshineDuration = deserializedWeather.Daily.SunshineDuration?[dailyIndex]
+                    + " s" ?? throw new ArgumentNullException("SunshineDuration");
+                weatherChecker_ReturnObject.Dataseries[i].RainSum = deserializedWeather.Daily.RainSum?[dailyIndex].ToString()
+                    + " mm" ?? throw new ArgumentNullException("RainSum");
+                weatherChecker_ReturnObject.Dataseries[i].ShowersSum = deserializedWeather.Daily.RainSum?[dailyIndex].ToString()
+                    + " mm" ?? throw new ArgumentNullException("ShowersSum");
+                weatherChecker_ReturnObject.Dataseries[i].SnowfallSum = deserializedWeather.Daily.SnowfallSum?[dailyIndex].ToString()
+                    + " cm" ?? throw new ArgumentNullException("SnowfallSum");
+                weatherChecker_ReturnObject.Dataseries[i].Temperature
+                    = deserializedWeather.Hourly.Temperature2m?[j].ToString() + " °C";
+                weatherChecker_ReturnObject.Dataseries[i].Humidity
+                    = deserializedWeather.Hourly.RelativeHumidity2m?[j].ToString() + " %";
+                weatherChecker_ReturnObject.Dataseries[i].ApparentTemperature
+                    = deserializedWeather.Hourly.ApparentTemperature?[j].ToString() + " °C";
+                weatherChecker_ReturnObject.Dataseries[i].PrecipitationProbability
+                    = deserializedWeather.Hourly.PrecipitationProbability?[j].ToString() + " %";
+                weatherChecker_ReturnObject.Dataseries[i].Rain = deserializedWeather.Hourly.Rain?[j].ToString() + " mm";
+                weatherChecker_ReturnObject.Dataseries[i].Showers = deserializedWeather.Hourly.Showers?[j].ToString() + " mm";
+                weatherChecker_ReturnObject.Dataseries[i].Snowfall = deserializedWeather.Hourly.Snowfall?[j].ToString() + " cm";
                 weatherChecker_ReturnObject.Dataseries[i].Weather
-                    = ConversionHelpers.WMONametoSimplifiedWeatherNameWithDayOrNight(deserializedWeather.Hourly.WeatherCode?[j] ?? 0,
-                    timePoint, sunriseString, sunsetString);
-
-                weatherChecker_ReturnObject.Dataseries[i].Temperature = deserializedWeather.Hourly.Temperature2m?[j].ToString() + "°C"; ;
-                weatherChecker_ReturnObject.Dataseries[i].Humidity = deserializedWeather.Hourly.RelativeHumidity2m?[j].ToString() + "%";
+                    = ConversionHelpers.WMONametoSimplifiedWeatherNameWithDayOrNight(deserializedWeather.Hourly.WeatherCode?[j]
+                    ?? 0, timePoint, sunriseString, sunsetString);
+                weatherChecker_ReturnObject.Dataseries[i].SurfacePressure
+                    = deserializedWeather.Hourly.SurfacePressure?[j].ToString() + " hPa";
+                weatherChecker_ReturnObject.Dataseries[i].Cloudcover
+                    = deserializedWeather.Hourly.CloudCover?[j].ToString() + " %";
+                WeatherChecker_ReturnObject.ForecastDataPoint.Wind wind10m
+                    = new WeatherChecker_ReturnObject.ForecastDataPoint.Wind();
+                wind10m.Speed = deserializedWeather.Hourly.WindSpeed10m?[j].ToString() + " m/s";
+                wind10m.Direction = ConversionHelpers.WindDirectionToCompassDirection(
+                    deserializedWeather.Hourly.WindDirection10m?[j] ?? 0);
+                wind10m.GustsSpeed = deserializedWeather.Hourly.WindGusts10m?[j].ToString() + " m/s";
+                weatherChecker_ReturnObject.Dataseries[i].Wind10m = wind10m;
             }
-            /*
-                // this.Timepoint = info.GetString("Timepoint");
-                this.Cloudcover = (int?)info.GetValue("Cloudcover", typeof(int));
-                this.Lifted_Index = (int?)info.GetValue("Lifted_Index", typeof(int));
-                this.Prec_Type = info.GetString("Prec_Type");
-                this.Prec_Amount = (int?)info.GetValue("Prec_Amount", typeof(int));
-                this.Temp2m = (int?)info.GetValue("Temp2m", typeof(int));
-                this.Rh2m = info.GetString("Rh2m");
-                this.Wind10m = (Wind?)info.GetValue("Wind10m", typeof(Wind));
-                // this.Weather = info.GetString("Weather");
-            */
             return weatherChecker_ReturnObject;
         }
 
+        private static int? FindDailyIndex(WeatherChecker_OpenMeteo_ReturnObject deserializedWeather, string timePoint)
+        {
+            return deserializedWeather.Daily?.Time?.FindIndex(x => x == timePoint.Substring(0, 10));
+        }
     }
 
     static class ConversionHelpers
     {
         internal static string WMONametoSimplifiedWeatherNameWithDayOrNight(int wmoCode, string dateTimeString, string sunriseString, string sunsetString /* "2024-04-29T09:00" */)
         {
-            //return "Harry";
             string wmoName = WmoWeatherName[wmoCode];
             if (IsDayLight(dateTimeString, sunriseString, sunsetString))
             {
@@ -522,38 +814,17 @@ namespace WeatherChecker
             return dateTimeString.CompareTo(sunriseString) >= 0 && dateTimeString.CompareTo(sunsetString) < 0;
         }
 
-        internal static string WMONametoSimplifiedWeatherNameWithDayOrNight(int wmoCode, int latitude, string dateTimeString /* "2024-04-29T09:00" */)
+        internal static string WindDirectionToCompassDirection(int windDirection)
         {
-            string wmoName = WmoWeatherName[wmoCode];
-            if (IsDayLight(wmoCode, latitude, dateTimeString))
-            {
-                return wmoName + "day";
-            }
-            else
-            {
-                return wmoName + "night";
-            }
+            int index = (int)(windDirection / 22.5 + 0.5);
+            return WindDirectionNames[index];
         }
 
-        internal static int DateTimeToQuarter(DateTime dateTime)
-        {
-            int month = dateTime.Month;
-            int day = dateTime.Day;
-            int monthDay = month * 100 + day;
-            if (monthDay > 200 && monthDay < 500)
-            {
-                return 1;
-            }
-            if (monthDay > 500 && monthDay < 800)
-            {
-                return 2;
-            }
-            if (monthDay > 800 && monthDay < 1100)
-            {
-                return 3;
-            }
-            return 4;
-        }
+        /// <summary>
+        /// This dictionary maps WMO weather codes to simplified weather names.
+        /// </summary>
+        internal static readonly string[] WindDirectionNames
+            = { "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N" };
 
         /// <summary>
         /// This dictionary maps WMO weather codes to simplified weather names.
@@ -592,6 +863,42 @@ namespace WeatherChecker
                 {100, "windy"}
             };
 
+        /*
+        internal static string WMONametoSimplifiedWeatherNameWithDayOrNight(int wmoCode, int latitude, string dateTimeString) // "2024-04-29T09:00"
+        {
+            string wmoName = WmoWeatherName[wmoCode];
+            if (IsDayLight(wmoCode, latitude, dateTimeString))
+            {
+                return wmoName + "day";
+            }
+            else
+            {
+                return wmoName + "night";
+            }
+        }
+        */
+
+        /*
+        internal static int DateTimeToQuarter(DateTime dateTime)
+        {
+            int month = dateTime.Month;
+            int day = dateTime.Day;
+            int monthDay = month * 100 + day;
+            if (monthDay > 200 && monthDay < 500)
+            {
+                return 1;
+            }
+            if (monthDay > 500 && monthDay < 800)
+            {
+                return 2;
+            }
+            if (monthDay > 800 && monthDay < 1100)
+            {
+                return 3;
+            }
+            return 4;
+        }
+        */
 
         /*
         internal static readonly Dictionary<string, string> _wmoWeatherName
@@ -630,7 +937,8 @@ namespace WeatherChecker
             };
         */
 
-        internal static bool IsDayLight(int wmoCode, int latitude, string dateTimeString /* "2024-04-29T09:00" */)
+        /*
+        internal static bool IsDayLight(int wmoCode, int latitude, string dateTimeString) // "2024-04-29T09:00"
         {
             DateTime dateTime = DateTime.Parse(dateTimeString);
             int quarter = DateTimeToQuarter(dateTime);
@@ -639,7 +947,9 @@ namespace WeatherChecker
             TimeSpan timeNow = new TimeSpan(dateTime.Hour, dateTime.Minute, dateTime.Second);
             return (daylightFrom < daylightTo && timeNow >= daylightFrom && timeNow < daylightTo);
         }
+        */
 
+        /*
         internal static readonly Dictionary<int, TimeSpan[]>[] _quarterLatitudeTime = new Dictionary<int, TimeSpan[]>[]
           {
             new Dictionary<int, TimeSpan[]> // Q1
@@ -699,6 +1009,7 @@ namespace WeatherChecker
                 , { -90, new TimeSpan[] { TimeSpan.Parse("00:00"), TimeSpan.Parse("23:59:59.999") } }
             }
         };
+        */
     }
 }
 
@@ -706,735 +1017,461 @@ namespace WeatherChecker
 // So sieht das Ergebnis des API-Calls in der Rohfassung aus:
 
 {
-    "latitude": 51.22,
-    "longitude": 6.7799993,
-    "generationtime_ms": 0.08106231689453125,
-    "utc_offset_seconds": 7200,
-    "timezone": "Europe/Berlin",
-    "timezone_abbreviation": "CEST",
-    "elevation": 45.0,
-    "hourly_units": {
-        "time": "iso8601",
-        "temperature_2m": "°C",
-        "relative_humidity_2m": "%",
-        "weather_code": "wmo code"
-    },
-    "hourly": {
-        "time": [
-            "2024-04-28T00:00",
-            "2024-04-28T01:00",
-            "2024-04-28T02:00",
-            "2024-04-28T03:00",
-            "2024-04-28T04:00",
-            "2024-04-28T05:00",
-            "2024-04-28T06:00",
-            "2024-04-28T07:00",
-            "2024-04-28T08:00",
-            "2024-04-28T09:00",
-            "2024-04-28T10:00",
-            "2024-04-28T11:00",
-            "2024-04-28T12:00",
-            "2024-04-28T13:00",
-            "2024-04-28T14:00",
-            "2024-04-28T15:00",
-            "2024-04-28T16:00",
-            "2024-04-28T17:00",
-            "2024-04-28T18:00",
-            "2024-04-28T19:00",
-            "2024-04-28T20:00",
-            "2024-04-28T21:00",
-            "2024-04-28T22:00",
-            "2024-04-28T23:00",
-            "2024-04-29T00:00",
-            "2024-04-29T01:00",
-            "2024-04-29T02:00",
-            "2024-04-29T03:00",
-            "2024-04-29T04:00",
-            "2024-04-29T05:00",
-            "2024-04-29T06:00",
-            "2024-04-29T07:00",
-            "2024-04-29T08:00",
-            "2024-04-29T09:00",
-            "2024-04-29T10:00",
-            "2024-04-29T11:00",
-            "2024-04-29T12:00",
-            "2024-04-29T13:00",
-            "2024-04-29T14:00",
-            "2024-04-29T15:00",
-            "2024-04-29T16:00",
-            "2024-04-29T17:00",
-            "2024-04-29T18:00",
-            "2024-04-29T19:00",
-            "2024-04-29T20:00",
-            "2024-04-29T21:00",
-            "2024-04-29T22:00",
-            "2024-04-29T23:00",
-            "2024-04-30T00:00",
-            "2024-04-30T01:00",
-            "2024-04-30T02:00",
-            "2024-04-30T03:00",
-            "2024-04-30T04:00",
-            "2024-04-30T05:00",
-            "2024-04-30T06:00",
-            "2024-04-30T07:00",
-            "2024-04-30T08:00",
-            "2024-04-30T09:00",
-            "2024-04-30T10:00",
-            "2024-04-30T11:00",
-            "2024-04-30T12:00",
-            "2024-04-30T13:00",
-            "2024-04-30T14:00",
-            "2024-04-30T15:00",
-            "2024-04-30T16:00",
-            "2024-04-30T17:00",
-            "2024-04-30T18:00",
-            "2024-04-30T19:00",
-            "2024-04-30T20:00",
-            "2024-04-30T21:00",
-            "2024-04-30T22:00",
-            "2024-04-30T23:00",
-            "2024-05-01T00:00",
-            "2024-05-01T01:00",
-            "2024-05-01T02:00",
-            "2024-05-01T03:00",
-            "2024-05-01T04:00",
-            "2024-05-01T05:00",
-            "2024-05-01T06:00",
-            "2024-05-01T07:00",
-            "2024-05-01T08:00",
-            "2024-05-01T09:00",
-            "2024-05-01T10:00",
-            "2024-05-01T11:00",
-            "2024-05-01T12:00",
-            "2024-05-01T13:00",
-            "2024-05-01T14:00",
-            "2024-05-01T15:00",
-            "2024-05-01T16:00",
-            "2024-05-01T17:00",
-            "2024-05-01T18:00",
-            "2024-05-01T19:00",
-            "2024-05-01T20:00",
-            "2024-05-01T21:00",
-            "2024-05-01T22:00",
-            "2024-05-01T23:00",
-            "2024-05-02T00:00",
-            "2024-05-02T01:00",
-            "2024-05-02T02:00",
-            "2024-05-02T03:00",
-            "2024-05-02T04:00",
-            "2024-05-02T05:00",
-            "2024-05-02T06:00",
-            "2024-05-02T07:00",
-            "2024-05-02T08:00",
-            "2024-05-02T09:00",
-            "2024-05-02T10:00",
-            "2024-05-02T11:00",
-            "2024-05-02T12:00",
-            "2024-05-02T13:00",
-            "2024-05-02T14:00",
-            "2024-05-02T15:00",
-            "2024-05-02T16:00",
-            "2024-05-02T17:00",
-            "2024-05-02T18:00",
-            "2024-05-02T19:00",
-            "2024-05-02T20:00",
-            "2024-05-02T21:00",
-            "2024-05-02T22:00",
-            "2024-05-02T23:00",
-            "2024-05-03T00:00",
-            "2024-05-03T01:00",
-            "2024-05-03T02:00",
-            "2024-05-03T03:00",
-            "2024-05-03T04:00",
-            "2024-05-03T05:00",
-            "2024-05-03T06:00",
-            "2024-05-03T07:00",
-            "2024-05-03T08:00",
-            "2024-05-03T09:00",
-            "2024-05-03T10:00",
-            "2024-05-03T11:00",
-            "2024-05-03T12:00",
-            "2024-05-03T13:00",
-            "2024-05-03T14:00",
-            "2024-05-03T15:00",
-            "2024-05-03T16:00",
-            "2024-05-03T17:00",
-            "2024-05-03T18:00",
-            "2024-05-03T19:00",
-            "2024-05-03T20:00",
-            "2024-05-03T21:00",
-            "2024-05-03T22:00",
-            "2024-05-03T23:00",
-            "2024-05-04T00:00",
-            "2024-05-04T01:00",
-            "2024-05-04T02:00",
-            "2024-05-04T03:00",
-            "2024-05-04T04:00",
-            "2024-05-04T05:00",
-            "2024-05-04T06:00",
-            "2024-05-04T07:00",
-            "2024-05-04T08:00",
-            "2024-05-04T09:00",
-            "2024-05-04T10:00",
-            "2024-05-04T11:00",
-            "2024-05-04T12:00",
-            "2024-05-04T13:00",
-            "2024-05-04T14:00",
-            "2024-05-04T15:00",
-            "2024-05-04T16:00",
-            "2024-05-04T17:00",
-            "2024-05-04T18:00",
-            "2024-05-04T19:00",
-            "2024-05-04T20:00",
-            "2024-05-04T21:00",
-            "2024-05-04T22:00",
-            "2024-05-04T23:00"
-        ],
-        "temperature_2m": [
-            14.7,
-            14.3,
-            13.4,
-            13.3,
-            12.3,
-            12.6,
-            12.7,
-            13.4,
-            14.8,
-            15.1,
-            16.2,
-            17.2,
-            17.6,
-            18.0,
-            18.0,
-            18.4,
-            18.3,
-            17.5,
-            17.0,
-            16.6,
-            15.8,
-            14.7,
-            13.7,
-            12.9,
-            12.2,
-            11.5,
-            11.0,
-            10.3,
-            9.9,
-            9.7,
-            9.5,
-            9.6,
-            10.5,
-            12.2,
-            14.1,
-            16.0,
-            17.5,
-            18.5,
-            19.5,
-            20.4,
-            20.4,
-            20.3,
-            20.3,
-            19.4,
-            18.5,
-            17.5,
-            16.5,
-            15.8,
-            15.4,
-            14.7,
-            14.3,
-            13.9,
-            13.4,
-            13.2,
-            13.0,
-            13.0,
-            13.4,
-            14.5,
-            15.4,
-            17.1,
-            18.6,
-            19.8,
-            21.2,
-            22.3,
-            23.0,
-            23.5,
-            24.0,
-            22.9,
-            21.7,
-            20.4,
-            19.3,
-            18.3,
-            17.6,
-            17.0,
-            16.3,
-            15.0,
-            14.2,
-            13.6,
-            13.3,
-            13.3,
-            14.1,
-            15.5,
-            17.5,
-            19.3,
-            20.8,
-            22.2,
-            23.4,
-            24.3,
-            24.9,
-            25.2,
-            25.2,
-            24.9,
-            24.2,
-            22.9,
-            21.3,
-            19.8,
-            18.5,
-            17.2,
-            16.2,
-            15.4,
-            15.0,
-            14.7,
-            14.5,
-            14.6,
-            15.1,
-            16.1,
-            17.5,
-            18.9,
-            20.3,
-            21.8,
-            23.1,
-            23.9,
-            24.5,
-            24.8,
-            24.7,
-            24.2,
-            23.4,
-            22.0,
-            20.2,
-            18.8,
-            18.2,
-            18.0,
-            17.9,
-            16.6,
-            15.8,
-            15.3,
-            15.1,
-            15.2,
-            16.0,
-            17.8,
-            20.2,
-            22.3,
-            23.5,
-            24.3,
-            24.8,
-            25.1,
-            25.0,
-            24.7,
-            24.2,
-            23.6,
-            22.7,
-            21.5,
-            20.2,
-            19.0,
-            17.9,
-            16.8,
-            15.8,
-            14.6,
-            13.5,
-            12.8,
-            12.5,
-            12.6,
-            13.3,
-            14.7,
-            16.7,
-            18.8,
-            20.9,
-            23.1,
-            24.6,
-            24.9,
-            24.6,
-            24.2,
-            23.8,
-            23.4,
-            22.6,
-            21.2,
-            19.5,
-            18.0
-        ],
-        "relative_humidity_2m": [
-            62,
-            61,
-            72,
-            70,
-            77,
-            72,
-            69,
-            66,
-            65,
-            65,
-            60,
-            52,
-            47,
-            45,
-            45,
-            41,
-            39,
-            43,
-            43,
-            44,
-            46,
-            52,
-            60,
-            60,
-            60,
-            65,
-            67,
-            71,
-            76,
-            80,
-            80,
-            80,
-            76,
-            71,
-            65,
-            58,
-            51,
-            44,
-            36,
-            36,
-            36,
-            39,
-            38,
-            44,
-            50,
-            57,
-            63,
-            66,
-            69,
-            73,
-            76,
-            79,
-            82,
-            84,
-            85,
-            85,
-            83,
-            77,
-            72,
-            65,
-            57,
-            52,
-            51,
-            50,
-            50,
-            47,
-            46,
-            57,
-            66,
-            72,
-            77,
-            80,
-            82,
-            84,
-            88,
-            92,
-            95,
-            97,
-            99,
-            100,
-            96,
-            89,
-            80,
-            72,
-            66,
-            62,
-            58,
-            55,
-            53,
-            52,
-            53,
-            54,
-            58,
-            64,
-            73,
-            80,
-            86,
-            91,
-            95,
-            97,
-            97,
-            97,
-            97,
-            96,
-            94,
-            89,
-            82,
-            75,
-            67,
-            58,
-            52,
-            49,
-            48,
-            48,
-            49,
-            51,
-            55,
-            64,
-            75,
-            80,
-            73,
-            59,
-            49,
-            50,
-            52,
-            54,
-            58,
-            62,
-            63,
-            58,
-            51,
-            44,
-            40,
-            38,
-            36,
-            33,
-            31,
-            30,
-            31,
-            35,
-            39,
-            45,
-            52,
-            59,
-            67,
-            76,
-            83,
-            86,
-            87,
-            87,
-            87,
-            86,
-            83,
-            77,
-            69,
-            61,
-            54,
-            47,
-            42,
-            40,
-            41,
-            42,
-            43,
-            45,
-            48,
-            52,
-            56,
-            59
-        ],
-        "weather_code": [
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            2,
-            3,
-            80,
-            2,
-            2,
-            2,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            2,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            0,
-            2,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            3,
-            80,
-            61,
-            80,
-            61,
-            61,
-            61,
-            3,
-            61,
-            3,
-            3,
-            2,
-            2,
-            2,
-            2,
-            3,
-            3,
-            2,
-            2,
-            1,
-            1,
-            3,
-            2,
-            3,
-            3,
-            1,
-            3,
-            45,
-            45,
-            45,
-            3,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            45,
-            45,
-            45,
-            45,
-            45,
-            45,
-            3,
-            3,
-            3,
-            2,
-            2,
-            2,
-            1,
-            1,
-            1,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            3,
-            3,
-            3,
-            0,
-            0,
-            0,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            3,
-            3,
-            3,
-            1,
-            1,
-            1,
-            2,
-            2,
-            2,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            0,
-            0,
-            0
-        ]
-    },
-    "daily_units": {
-        "time": "iso8601",
-        "sunrise": "iso8601",
-        "sunset": "iso8601"
-    },
-    "daily": {
-        "time": [
-            "2024-04-28",
-            "2024-04-29",
-            "2024-04-30",
-            "2024-05-01",
-            "2024-05-02",
-            "2024-05-03",
-            "2024-05-04"
-        ],
-        "sunrise": [
-            "2024-04-28T06:10",
-            "2024-04-29T06:08",
-            "2024-04-30T06:06",
-            "2024-05-01T06:04",
-            "2024-05-02T06:02",
-            "2024-05-03T06:00",
-            "2024-05-04T05:58"
-        ],
-        "sunset": [
-            "2024-04-28T20:50",
-            "2024-04-29T20:52",
-            "2024-04-30T20:53",
-            "2024-05-01T20:55",
-            "2024-05-02T20:57",
-            "2024-05-03T20:58",
-            "2024-05-04T21:00"
-        ]
-    }
+	"latitude": 51.268,
+	"longitude": 6.8149996,
+	"generationtime_ms": 0.10693073272705078,
+	"utc_offset_seconds": 7200,
+	"timezone": "Europe/Berlin",
+	"timezone_abbreviation": "CEST",
+	"elevation": 39.0,
+	"hourly_units": {
+		"time": "iso8601",
+		"temperature_2m": "°C",
+		"relative_humidity_2m": "%",
+		"apparent_temperature": "°C",
+		"precipitation_probability": "%",
+		"precipitation": "mm",
+		"rain": "mm",
+		"showers": "mm",
+		"snowfall": "cm",
+		"snow_depth": "m",
+		"weather_code": "wmo code",
+		"surface_pressure": "hPa",
+		"wind_speed_10m": "km/h",
+		"wind_direction_10m": "%",
+		"wind_gusts_10m": "km/h"
+	},
+	"hourly": {
+		"time": [
+			"2024-09-09T00:00",
+			"2024-09-09T01:00",
+			"2024-09-09T02:00",
+			"2024-09-09T03:00",
+			"2024-09-09T04:00",
+			"2024-09-09T05:00",
+			"2024-09-09T06:00",
+			"2024-09-09T07:00",
+			"2024-09-09T08:00",
+			"2024-09-09T09:00",
+			"2024-09-09T10:00",
+			"2024-09-09T11:00",
+			"2024-09-09T12:00",
+			"2024-09-09T13:00",
+			"2024-09-09T14:00",
+			"2024-09-09T15:00",
+			"2024-09-09T16:00",
+			"2024-09-09T17:00",
+			"2024-09-09T18:00",
+			"2024-09-09T19:00",
+			"2024-09-09T20:00",
+			"2024-09-09T21:00",
+			"2024-09-09T22:00",
+			"2024-09-09T23:00"
+		],
+		"temperature_2m": [
+			18.5,
+			17.8,
+			17.9,
+			16.3,
+			16.0,
+			16.2,
+			15.7,
+			16.0,
+			15.8,
+			16.2,
+			17.9,
+			17.2,
+			16.5,
+			16.7,
+			18.0,
+			19.2,
+			19.5,
+			19.6,
+			20.5,
+			19.2,
+			18.0,
+			17.2,
+			16.8,
+			16.8
+		],
+		"relative_humidity_2m": [
+			62,
+			65,
+			66,
+			71,
+			76,
+			72,
+			75,
+			75,
+			85,
+			85,
+			79,
+			81,
+			85,
+			86,
+			84,
+			75,
+			73,
+			71,
+			69,
+			73,
+			81,
+			92,
+			92,
+			89
+		],
+		"apparent_temperature": [
+			17.5,
+			17.3,
+			17.3,
+			15.2,
+			14.9,
+			15.5,
+			14.9,
+			15.7,
+			15.8,
+			15.8,
+			18.0,
+			17.1,
+			17.0,
+			17.0,
+			18.5,
+			18.7,
+			19.4,
+			19.7,
+			20.9,
+			18.8,
+			17.5,
+			17.8,
+			16.6,
+			16.3
+		],
+		"precipitation_probability": [
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			13,
+			32,
+			49,
+			61,
+			71,
+			78,
+			80,
+			78,
+			78,
+			81,
+			84,
+			86,
+			85,
+			82,
+			80,
+			80,
+			79,
+			76
+		],
+		"precipitation": [
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.40,
+			0.00,
+			0.00,
+			0.00,
+			0.10,
+			0.50,
+			0.10,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			2.20,
+			0.40,
+			0.00
+		],
+		"rain": [
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00
+		],
+		"showers": [
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.40,
+			0.00,
+			0.00,
+			0.00,
+			0.10,
+			0.50,
+			0.10,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			2.20,
+			0.40,
+			0.00
+		],
+		"snowfall": [
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00
+		],
+		"snow_depth": [
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00,
+			0.00
+		],
+		"weather_code": [
+			0,
+			0,
+			3,
+			0,
+			0,
+			3,
+			3,
+			51,
+			3,
+			0,
+			0,
+			51,
+			53,
+			51,
+			3,
+			3,
+			3,
+			3,
+			0,
+			3,
+			3,
+			61,
+			51,
+			3
+		],
+		"surface_pressure": [
+			1001.8,
+			1001.3,
+			1000.2,
+			1000.1,
+			999.6,
+			999.2,
+			999.0,
+			998.6,
+			998.8,
+			998.9,
+			998.6,
+			998.6,
+			998.9,
+			999.1,
+			999.9,
+			1000.0,
+			1000.1,
+			1000.3,
+			1000.7,
+			1001.0,
+			1001.9,
+			1002.5,
+			1003.2,
+			1004.0
+		],
+		"wind_speed_10m": [
+			9.4,
+			6.1,
+			7.6,
+			9.7,
+			11.2,
+			7.2,
+			7.9,
+			5.4,
+			7.6,
+			10.4,
+			8.6,
+			9.4,
+			5.8,
+			7.6,
+			8.6,
+			13.7,
+			11.2,
+			8.6,
+			7.6,
+			12.2,
+			14.0,
+			10.1,
+			14.0,
+			14.8
+		],
+		"wind_direction_10m": [
+			184,
+			176,
+			182,
+			146,
+			140,
+			150,
+			169,
+			145,
+			125,
+			140,
+			152,
+			204,
+			223,
+			277,
+			290,
+			273,
+			292,
+			287,
+			255,
+			291,
+			274,
+			260,
+			276,
+			307
+		],
+		"wind_gusts_10m": [
+			15.8,
+			11.9,
+			14.4,
+			17.3,
+			19.1,
+			14.8,
+			17.3,
+			12.6,
+			15.8,
+			20.9,
+			21.6,
+			19.8,
+			18.0,
+			15.5,
+			18.7,
+			27.0,
+			27.4,
+			23.4,
+			17.3,
+			35.6,
+			33.5,
+			26.3,
+			29.9,
+			27.4
+		]
+	},
+	"daily_units": {
+		"time": "iso8601",
+		"temperature_2m_max": "°C",
+		"apparent_temperature_max": "°C",
+		"sunrise": "iso8601",
+		"sunset": "iso8601",
+		"sunshine_duration": "s",
+		"rain_sum": "mm",
+		"showers_sum": "mm",
+		"snowfall_sum": "cm"
+	},
+	"daily": {
+		"time": [
+			"2024-09-09"
+		],
+		"temperature_2m_max": [
+			20.5
+		],
+		"apparent_temperature_max": [
+			20.9
+		],
+		"sunrise": [
+			"2024-09-09T06:59"
+		],
+		"sunset": [
+			"2024-09-09T20:00"
+		],
+		"sunshine_duration": [
+			17152.51
+		],
+		"rain_sum": [
+			0.00
+		],
+		"showers_sum": [
+			3.70
+		],
+		"snowfall_sum": [
+			0.00
+		]
+	}
 }
-
 */

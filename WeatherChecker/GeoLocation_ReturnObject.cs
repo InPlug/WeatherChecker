@@ -45,6 +45,12 @@ namespace WeatherChecker
         public double? Longitude { get; set; }
 
         /// <summary>
+        /// Elevation of the requested location (in meters).
+        /// </summary>
+        [DataMember]
+        public double? Elevation { get; set; }
+
+        /// <summary>
         /// Standard constructor.
         /// </summary>
         public GeoLocation_ReturnObject()
@@ -63,6 +69,7 @@ namespace WeatherChecker
             this.City = info.GetString("City");
             this.Latitude = (double?)info.GetValue("Latitude", typeof(double));
             this.Longitude = (double?)info.GetValue("Longitude", typeof(double));
+            this.Longitude = (double?)info.GetValue("Elevation", typeof(double));
         }
 
         /// <summary>
@@ -77,6 +84,7 @@ namespace WeatherChecker
             info.AddValue("City", this.City);
             info.AddValue("Latitude", this.Latitude);
             info.AddValue("Longitude", this.Longitude);
+            info.AddValue("Elevation", this.Elevation);
         }
 
         /// <summary>
@@ -92,6 +100,7 @@ namespace WeatherChecker
             stringBuilder.Append(delimiter + "City: " + this.City);
             stringBuilder.Append(delimiter + "Latitude: " + this.Latitude);
             stringBuilder.Append(delimiter + "Longitude: " + this.Longitude);
+            stringBuilder.Append(delimiter + "Elevation: " + this.Elevation);
             return stringBuilder.ToString();
         }
 

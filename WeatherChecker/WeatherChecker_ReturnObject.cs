@@ -29,7 +29,7 @@ namespace WeatherChecker
             public class Wind
             {
                 /// <summary>
-                /// Windrichtung: N, NE, E, SE, S, SW, W, NW.
+                /// Windrichtung: N, NNE, NE, ENE, E, ESE, SE, SSE, S, SSW, SW, WSW, W, WNW, NW, NNW
                 /// </summary>
                 [DataMember]
                 public string? Direction { get; set; }
@@ -46,7 +46,21 @@ namespace WeatherChecker
                 ///     8	über 32.6m/s    (Orkan)
                 /// </summary>
                 [DataMember]
-                public int? Speed { get; set; }
+                public string? Speed { get; set; }
+
+                /// <summary>
+                /// Windgeschwindigkeit:
+                ///     1	unter 0.3m/s    (ruhig)
+                ///     2	0.3-3.4m/s      (leicht)
+                ///     3	3.4-8.0m/s      (gemäßigt)
+                ///     4	8.0-10.8m/s     (frisch)
+                ///     5	10.8-17.2m/s    (stark)
+                ///     6	17.2-24.5m/s    (heftig)
+                ///     7	24.5-32.6m/s    (stürmisch)
+                ///     8	über 32.6m/s    (Orkan)
+                /// </summary>
+                [DataMember]
+                public string? GustsSpeed { get; set; }
 
                 /// <summary>
                 /// Standard Konstruktor.
@@ -61,7 +75,8 @@ namespace WeatherChecker
                 protected Wind(SerializationInfo info, StreamingContext context)
                 {
                     this.Direction = info.GetString("Direction");
-                    this.Speed = (int?)info.GetValue("Speed", typeof(int));
+                    this.Speed = info.GetString("Speed");
+                    this.GustsSpeed = info.GetString("GustsSpeed");
                 }
 
                 /// <summary>
@@ -73,6 +88,7 @@ namespace WeatherChecker
                 {
                     info.AddValue("Direction", this.Direction);
                     info.AddValue("Speed", this.Speed);
+                    info.AddValue("GustsSpeed", this.GustsSpeed);
                 }
 
                 /// <summary>
@@ -83,7 +99,8 @@ namespace WeatherChecker
                 {
                     StringBuilder stringBuilder = new StringBuilder(this.Direction);
                     string delimiter = ", ";
-                    stringBuilder.Append(delimiter + this.Speed.ToString());
+                    stringBuilder.Append(delimiter + this.Speed);
+                    stringBuilder.Append(delimiter + this.GustsSpeed);
                     return stringBuilder.ToString();
                 }
 
@@ -127,57 +144,6 @@ namespace WeatherChecker
             public string? Timepoint { get; set; }
 
             /// <summary>
-            /// Bewölkung:
-            ///     1	0%-6%
-            ///     2	6%-19%
-            ///     3	19%-31%
-            ///     4	31%-44%
-            ///     5	44%-56%
-            ///     6	56%-69%
-            ///     7	69%-81%
-            ///     8	81%-94%
-            ///     9	94%-100%
-            /// </summary>
-            [DataMember]
-            public int? Cloudcover { get; set; }
-
-            /// <summary>
-            /// Stabilitätsindikator - je kleiner, desto instabiler ist die Wetterlage:
-            ///     -10	    Below -7
-            ///      -6	    -7 to -5
-            ///      -4	    -5 to -3
-            ///      -1	    -3 to 0
-            ///       2	     0 to 4
-            ///       6	     4 to 8
-            ///      10	     8 to 11
-            ///      15	    Over 11
-            /// </summary>
-            [DataMember]
-            public int? Lifted_Index { get; set; }
-
-            /// <summary>
-            /// Niederschlag: snow, rain, frzr (freezing rain), icep (ice pellets), none.
-            /// </summary>
-            [DataMember]
-            public string? Prec_Type { get; set; }
-
-            /// <summary>
-            /// Niederschlagsmenge:
-            ///     0	None
-            ///     1    0-0.25mm/hr
-            ///     2	 0.25-1mm/hr
-            ///     3	 1-4mm/hr
-            ///     4	 4-10mm/hr
-            ///     5	10-16mm/hr
-            ///     6	16-30mm/hr
-            ///     7	30-50mm/hr
-            ///     8	50-75mm/hr
-            ///     9	Over 75mm/hr
-            /// </summary>
-            [DataMember]
-            public int? Prec_Amount { get; set; }
-
-            /// <summary>
             /// Temperatur (in 2 m Höhe über dem Erdboden gemessen): -76 to 60: -76C to +60C.
             /// </summary>
             [DataMember]
@@ -190,10 +156,34 @@ namespace WeatherChecker
             public string? Humidity { get; set; }
 
             /// <summary>
-            /// Unterklasse: fasst Windrichtung und Windgeschwindigkeit zusammen.
+            /// The unit of measurement for the apparent temperature data (e.g., "celsius").
             /// </summary>
             [DataMember]
-            public Wind? Wind10m { get; set; }
+            public string? ApparentTemperature { get; set; }
+
+            /// <summary>
+            /// List of precipitation probability values (from HourlyUnits.PrecipitationProbability).
+            /// </summary>
+            [DataMember]
+            public string? PrecipitationProbability { get; set; }
+
+            /// <summary>
+            /// List of rain values (from HourlyUnits.Rain).
+            /// </summary>
+            [DataMember]
+            public string? Rain { get; set; }
+
+            /// <summary>
+            /// List of showers values (from HourlyUnits.Showers).
+            /// </summary>
+            [DataMember]
+            public string? Showers { get; set; }
+
+            /// <summary>
+            /// List of snowfall values (from HourlyUnits.Snowfall).
+            /// </summary>
+            [DataMember]
+            public string? Snowfall { get; set; }
 
             /// <summary>
             /// Wetterbeschreibung:
@@ -214,6 +204,69 @@ namespace WeatherChecker
             public string? Weather { get; set; }
 
             /// <summary>
+            /// List of surface pressure data (from HourlyUnits.SurfacePressure).
+            /// </summary>
+            [DataMember]
+            public string? SurfacePressure { get; set; }
+
+            /// <summary>
+            /// Bewölkung:
+            ///     1	0%-6%
+            ///     2	6%-19%
+            ///     3	19%-31%
+            ///     4	31%-44%
+            ///     5	44%-56%
+            ///     6	56%-69%
+            ///     7	69%-81%
+            ///     8	81%-94%
+            ///     9	94%-100%
+            /// </summary>
+            [DataMember]
+            public string? Cloudcover { get; set; }
+
+            /// <summary>
+            /// Unterklasse: fasst Windrichtung und Windgeschwindigkeit zusammen.
+            /// </summary>
+            [DataMember]
+            public Wind? Wind10m { get; set; }
+
+            /// <summary>
+            /// List of sunrise times for each day (in the unit specified by DailyUnits.Sunrise).
+            /// </summary>
+            [DataMember]
+            public string? Sunrise { get; set; }
+
+            /// <summary>
+            /// List of sunset times for each day (in the unit specified by DailyUnits.Sunset).
+            /// </summary>
+            [DataMember]
+            public string? Sunset { get; set; }
+
+            /// <summary>
+            /// List of sunshine duration times for each day (in the unit specified by DailyUnits.SunshineDuration).
+            /// </summary>
+            [DataMember]
+            public string? SunshineDuration { get; set; }
+
+            /// <summary>
+            /// List of rain sum values (from DailyUnits.RainSum).
+            /// </summary>
+            [DataMember]
+            public string? RainSum { get; set; }
+
+            /// <summary>
+            /// List of showers sum values (from DailyUnits.ShowersSum).
+            /// </summary>
+            [DataMember]
+            public string? ShowersSum { get; set; }
+
+            /// <summary>
+            /// List of snowfall sum values (from DailyUnits.SnowfallSum).
+            /// </summary>
+            [DataMember]
+            public string? SnowfallSum { get; set; }
+
+            /// <summary>
             /// Standard Konstruktor.
             /// </summary>
             public ForecastDataPoint() { }
@@ -226,14 +279,23 @@ namespace WeatherChecker
             protected ForecastDataPoint(SerializationInfo info, StreamingContext context)
             {
                 this.Timepoint = info.GetString("Timepoint");
-                this.Cloudcover = (int?)info.GetValue("Cloudcover", typeof(int));
-                this.Lifted_Index = (int?)info.GetValue("Lifted_Index", typeof(int));
-                this.Prec_Type = info.GetString("Prec_Type");
-                this.Prec_Amount = (int?)info.GetValue("Prec_Amount", typeof(int));
                 this.Temperature = info.GetString("Temperature");
-                this.Humidity = info.GetString("Rh2m");
-                this.Wind10m = (Wind?)info.GetValue("Wind10m", typeof(Wind));
+                this.Humidity = info.GetString("Humidity");
+                this.ApparentTemperature = info.GetString("ApparentTemperature");
+                this.PrecipitationProbability = info.GetString("PrecipitationProbability");
+                this.Rain = info.GetString("Rain");
+                this.Showers = info.GetString("Showers");
+                this.Snowfall = info.GetString("Snowfall");
                 this.Weather = info.GetString("Weather");
+                this.SurfacePressure = info.GetString("SurfacePressure");
+                this.Cloudcover = info.GetString("Cloudcover");
+                this.Wind10m = (Wind?)info.GetValue("Wind10m", typeof(Wind));
+                this.Sunrise = info.GetString("Sunrise");
+                this.Sunset = info.GetString("Sunset");
+                this.SunshineDuration = info.GetString("SunshineDuration");
+                this.RainSum = info.GetString("RainSum");
+                this.ShowersSum = info.GetString("ShowersSum");
+                this.SnowfallSum = info.GetString("SnowfallSum");
             }
 
             /// <summary>
@@ -244,14 +306,23 @@ namespace WeatherChecker
             public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 info.AddValue("Timepoint", this.Timepoint);
-                info.AddValue("Cloudcover", this.Cloudcover);
-                info.AddValue("Lifted_Index", this.Lifted_Index);
-                info.AddValue("Prec_Type", this.Prec_Type);
-                info.AddValue("Prec_Amount", this.Prec_Amount);
                 info.AddValue("Temperature", this.Temperature);
                 info.AddValue("Humidity", this.Humidity);
-                info.AddValue("Wind10m", this.Wind10m);
+                info.AddValue("ApparentTemperature", this.ApparentTemperature);
+                info.AddValue("PrecipitationProbability", this.PrecipitationProbability);
+                info.AddValue("Rain", this.Rain);
+                info.AddValue("Showers", this.Showers);
+                info.AddValue("Snowfall", this.Snowfall);
                 info.AddValue("Weather", this.Weather);
+                info.AddValue("SurfacePressure", this.SurfacePressure);
+                info.AddValue("Cloudcover", this.Cloudcover);
+                info.AddValue("Wind10m", this.Wind10m);
+                info.AddValue("Sunrise", this.Sunrise);
+                info.AddValue("Sunset", this.Sunset);
+                info.AddValue("SunshineDuration", this.SunshineDuration);
+                info.AddValue("RainSum", this.RainSum);
+                info.AddValue("ShowersSum", this.ShowersSum);
+                info.AddValue("SnowfallSum", this.SnowfallSum);
             }
 
             /// <summary>
@@ -262,14 +333,23 @@ namespace WeatherChecker
             {
                 StringBuilder stringBuilder = new StringBuilder(this.Timepoint?.ToString());
                 string delimiter = ", ";
-                stringBuilder.Append(delimiter + this.Cloudcover.ToString());
-                stringBuilder.Append(delimiter + this.Lifted_Index.ToString());
-                stringBuilder.Append(delimiter + this.Prec_Type);
-                stringBuilder.Append(delimiter + this.Prec_Amount.ToString());
                 stringBuilder.Append(delimiter + this.Temperature);
                 stringBuilder.Append(delimiter + this.Humidity);
-                stringBuilder.Append(delimiter + this.Wind10m?.ToString());
+                stringBuilder.Append(delimiter + this.ApparentTemperature);
+                stringBuilder.Append(delimiter + this.PrecipitationProbability);
+                stringBuilder.Append(delimiter + this.Rain);
+                stringBuilder.Append(delimiter + this.Showers);
+                stringBuilder.Append(delimiter + this.Snowfall);
                 stringBuilder.Append(delimiter + this.Weather);
+                stringBuilder.Append(delimiter + this.SurfacePressure);
+                stringBuilder.Append(delimiter + this.Cloudcover);
+                stringBuilder.Append(delimiter + this.Wind10m?.ToString());
+                stringBuilder.Append(delimiter + this.Sunrise?.ToString());
+                stringBuilder.Append(delimiter + this.Sunset?.ToString());
+                stringBuilder.Append(delimiter + this.SunshineDuration?.ToString());
+                stringBuilder.Append(delimiter + this.RainSum?.ToString());
+                stringBuilder.Append(delimiter + this.ShowersSum?.ToString());
+                stringBuilder.Append(delimiter + this.SnowfallSum?.ToString());
                 return stringBuilder.ToString();
             }
 
@@ -313,16 +393,16 @@ namespace WeatherChecker
         public string? Creation { get; set; }
 
         /// <summary>
-        /// Array von Wettervorhersagen für aufeinander folgende Zeitabschnitte.
-        /// </summary>
-        [DataMember]
-        public List<ForecastDataPoint>? Dataseries { get; set; }
-
-        /// <summary>
         /// Enthält Ortsinformationen.
         /// </summary>
         [DataMember]
         public GeoLocation_ReturnObject? Location { get; set; }
+
+        /// <summary>
+        /// Array von Wettervorhersagen für aufeinander folgende Zeitabschnitte.
+        /// </summary>
+        [DataMember]
+        public List<ForecastDataPoint>? Dataseries { get; set; }
 
         /// <summary>
         /// Liefert die Anzahl ForecastDataPoints.
@@ -357,8 +437,8 @@ namespace WeatherChecker
         protected WeatherChecker_ReturnObject(SerializationInfo info, StreamingContext context)
         {
             this.Creation = info.GetString("Creation");
-            this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
             this.Location = (GeoLocation_ReturnObject?)info.GetValue("Location", typeof(GeoLocation_ReturnObject));
+            this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
         }
 
         /// <summary>
@@ -369,8 +449,8 @@ namespace WeatherChecker
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Creation", this.Creation);
-            info.AddValue("Dataseries", this.Dataseries);
             info.AddValue("Location", this.Location);
+            info.AddValue("Dataseries", this.Dataseries);
         }
 
         /// <summary>
