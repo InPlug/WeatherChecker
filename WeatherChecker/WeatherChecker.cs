@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Vishnu.Interchange;
+using Windows_Geolocation;
 
 namespace WeatherChecker
 {
@@ -30,6 +31,7 @@ namespace WeatherChecker
     /// 11.10.2020 Erik Nagel: erstellt
     /// 26.04.2024 Erik Nagel: auf open.meteo.com geaendert.
     /// 14.09.2024 Erik Nagel: für die zusätzliche Darstellung von Einzelinformationen erweitert.
+    /// 10.04.2025 Erik Nagel: für höhere Genauigkeit die Windows-Standort Abfrage hinzugefügt.
     /// </remarks>
     public class WeatherChecker : INodeChecker, IDisposable
     {
@@ -121,6 +123,21 @@ namespace WeatherChecker
 
         private object? _returnObject = null;
 
+        private async Task<GeoLocation_ReturnObject?> GetWindowsLocation()
+        {
+            LocationService locationService = new LocationService();
+
+            Windows.Devices.Geolocation.Geoposition result = await locationService.GetCurrentLocationAsync();
+            GeoLocation_ReturnObject? returnObject = new GeoLocation_ReturnObject()
+            {
+                Latitude = result.Coordinate.Point.Position.Latitude,
+                Longitude = result.Coordinate.Point.Position.Longitude,
+                Elevation = result.Coordinate.Point.Position.Altitude
+            };
+
+            return returnObject;
+        }
+
         private async Task<GeoLocation_ReturnObject?> GetGeoLocation()
         {
             // Uri uri = new Uri(@"http://ip-api.com/json");
@@ -178,7 +195,18 @@ namespace WeatherChecker
             string? longitude = "6.7735";  // fallback
             string? latitude = "51.2277";  // = Düsseldorf
 
-            GeoLocation_ReturnObject? geoLocation_ReturnObject = Task.Run(() => this.GetGeoLocation()).Result;
+            // Latitude = 53.545803344748855, Longitude = 9.9729329908675783 Hamburg
+
+            GeoLocation_ReturnObject? geoLocation_ReturnObject = Task.Run(() => this.GetWindowsLocation()).Result;
+            if (geoLocation_ReturnObject != null)
+            {
+                longitude = geoLocation_ReturnObject.Longitude.ToString()?.Replace(',', '.');
+                latitude = geoLocation_ReturnObject.Latitude.ToString()?.Replace(',', '.');
+            }
+            else
+            {
+                geoLocation_ReturnObject = Task.Run(() => this.GetGeoLocation()).Result;
+            }
 
             if (geoLocation_ReturnObject != null)
             {
