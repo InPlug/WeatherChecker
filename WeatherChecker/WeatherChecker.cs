@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Threading;
@@ -138,6 +137,43 @@ namespace WeatherChecker
             return returnObject;
         }
 
+        private async Task<AddressDetails_ReturnObject?> GetAddressDetailsByLocation(string latitude, string longitude)
+        {
+            Uri uri = new Uri(
+                $"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&accept-language=de-DE&format=json");
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Vishnu/8.3.0 (vishnu@reallyhuman.net)");
+            client.Timeout = new TimeSpan(0, 0, 10);
+            HttpResponseMessage? response = null;
+            string? responseJsonString = null;
+            AddressDetails_ReturnObject? addressDetails_ReturnObject = null;
+            try
+            {
+                response = await client.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                responseJsonString = await response.Content.ReadAsStringAsync();
+                var settings = new JsonSerializerSettings
+                {
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                };
+                addressDetails_ReturnObject = JsonConvert.DeserializeObject<AddressDetails_ReturnObject>(responseJsonString, settings);
+            }
+            catch (HttpRequestException)
+            {
+                // Handle exception here
+                throw;
+                // return null;
+            }
+            finally
+            {
+                response?.Dispose();
+                client?.Dispose();
+            }
+
+            return addressDetails_ReturnObject;
+        }
+
         private async Task<GeoLocation_ReturnObject?> GetGeoLocation()
         {
             // Uri uri = new Uri(@"http://ip-api.com/json");
@@ -197,11 +233,26 @@ namespace WeatherChecker
 
             // Latitude = 53.545803344748855, Longitude = 9.9729329908675783 Hamburg
 
-            GeoLocation_ReturnObject? geoLocation_ReturnObject = Task.Run(() => this.GetWindowsLocation()).Result;
+            GeoLocation_ReturnObject? geoLocation_ReturnObject =
+                Task.Run(() => this.GetWindowsLocation()).Result;
             if (geoLocation_ReturnObject != null)
             {
-                longitude = geoLocation_ReturnObject.Longitude.ToString()?.Replace(',', '.');
-                latitude = geoLocation_ReturnObject.Latitude.ToString()?.Replace(',', '.');
+                longitude = geoLocation_ReturnObject.Longitude.ToString()?.Replace(',', '.') ?? "";
+                latitude = geoLocation_ReturnObject.Latitude.ToString()?.Replace(',', '.') ?? "";
+                AddressDetails_ReturnObject? addressDetails_ReturnObject =
+                    Task.Run(() => this.GetAddressDetailsByLocation(latitude.ToString(), longitude.ToString())).Result;
+                if (addressDetails_ReturnObject != null)
+                {
+                    geoLocation_ReturnObject.City = addressDetails_ReturnObject.Address?.City;
+                    geoLocation_ReturnObject.Country = addressDetails_ReturnObject.Address?.Country;
+                    geoLocation_ReturnObject.Region = addressDetails_ReturnObject.Address?.State;
+                }
+                else
+                {
+                    geoLocation_ReturnObject.City = "---";
+                    geoLocation_ReturnObject.Country = "";
+                    geoLocation_ReturnObject.Region = "";
+                }
             }
             else
             {
