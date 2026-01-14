@@ -243,9 +243,13 @@ namespace WeatherChecker
                     Task.Run(() => this.GetAddressDetailsByLocation(latitude.ToString(), longitude.ToString())).Result;
                 if (addressDetails_ReturnObject != null)
                 {
-                    geoLocation_ReturnObject.City = addressDetails_ReturnObject.Address?.City;
-                    geoLocation_ReturnObject.Country = addressDetails_ReturnObject.Address?.Country;
-                    geoLocation_ReturnObject.Region = addressDetails_ReturnObject.Address?.State;
+                    if (addressDetails_ReturnObject.Address != null)
+                    {
+                        geoLocation_ReturnObject.City = addressDetails_ReturnObject.Address.City ??
+                            addressDetails_ReturnObject.Address.Town;
+                        geoLocation_ReturnObject.Country = addressDetails_ReturnObject.Address.Country;
+                        geoLocation_ReturnObject.Region = addressDetails_ReturnObject.Address.State;
+                    }
                 }
                 else
                 {

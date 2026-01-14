@@ -51,5 +51,11 @@ namespace WeatherChecker
         [JsonPropertyName("city")]
         public string? City { get; set; }
 
+        /// <summary>
+        /// City name.
+        /// </summary>
+        [JsonPropertyName("town")]
+        public string? Town { get; set; }
+
     }
 }
