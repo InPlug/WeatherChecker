@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace WeatherChecker
 {
@@ -8,6 +7,7 @@ namespace WeatherChecker
     /// </summary>
     /// <remarks>
     /// 26.04.2025 Erik Nagel: erstellt
+    /// 13.03.2026 Erik Nagel: Ortsproperty "village" hinzugefügt.
     /// </remarks>
     public class AddressDetails_ReturnObject
     {
@@ -56,6 +56,12 @@ namespace WeatherChecker
         /// </summary>
         [JsonPropertyName("town")]
         public string? Town { get; set; }
+
+        /// <summary>
+        /// City name.
+        /// </summary>
+        [JsonPropertyName("village")]
+        public string? Village { get; set; }
 
     }
 }

@@ -246,7 +246,8 @@ namespace WeatherChecker
                     if (addressDetails_ReturnObject.Address != null)
                     {
                         geoLocation_ReturnObject.City = addressDetails_ReturnObject.Address.City ??
-                            addressDetails_ReturnObject.Address.Town;
+                            addressDetails_ReturnObject.Address.Town ??
+                            addressDetails_ReturnObject.Address.Village;
                         geoLocation_ReturnObject.Country = addressDetails_ReturnObject.Address.Country;
                         geoLocation_ReturnObject.Region = addressDetails_ReturnObject.Address.State;
                     }
