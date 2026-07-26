@@ -139,25 +139,49 @@ namespace WeatherChecker
 
         private async Task<AddressDetails_ReturnObject?> GetAddressDetailsByLocation(string latitude, string longitude)
         {
-            Uri uri = new Uri(
+            Uri uri1 = new Uri(
                 $"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&accept-language=de-DE&format=json");
-
+            Uri uri2 = new Uri(
+                $"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&zoom=12&accept-language=de-DE&format=json");
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "Vishnu/8.3.0 (vishnu@reallyhuman.net)");
             client.Timeout = new TimeSpan(0, 0, 10);
             HttpResponseMessage? response = null;
             string? responseJsonString = null;
             AddressDetails_ReturnObject? addressDetails_ReturnObject = null;
+            AddressDetails_ReturnObject? addressDetails_ReturnObject2 = null;
             try
             {
-                response = await client.GetAsync(uri);
-                response.EnsureSuccessStatusCode();
-                responseJsonString = await response.Content.ReadAsStringAsync();
                 var settings = new JsonSerializerSettings
                 {
                     MissingMemberHandling = MissingMemberHandling.Ignore
                 };
-                addressDetails_ReturnObject = JsonConvert.DeserializeObject<AddressDetails_ReturnObject>(responseJsonString, settings);
+                response = await client.GetAsync(uri1);
+                response.EnsureSuccessStatusCode();
+                responseJsonString = await response.Content.ReadAsStringAsync();
+                // addressDetails_ReturnObject = JsonConvert.DeserializeObject<AddressDetails_ReturnObject>(responseJsonString, settings);
+                addressDetails_ReturnObject = System.Text.Json.JsonSerializer.Deserialize<AddressDetails_ReturnObject>(responseJsonString);
+                string? village1 = addressDetails_ReturnObject?.Address?.Village;
+
+                try
+                {
+                    response = await client.GetAsync(uri2);
+                    response.EnsureSuccessStatusCode();
+                    responseJsonString = await response.Content.ReadAsStringAsync();
+                    addressDetails_ReturnObject2 = System.Text.Json.JsonSerializer.Deserialize<AddressDetails_ReturnObject>(responseJsonString);
+                    string? village2 = addressDetails_ReturnObject2?.Address?.Village;
+                    if (village1 != null && village2 != null && village2 != village1)
+                    {
+                        addressDetails_ReturnObject!.Address!.Village += $" ({village2})";
+                    }
+                }
+                catch
+                {
+                    if (addressDetails_ReturnObject != null)
+                    {
+                        addressDetails_ReturnObject.DisplayName = "(Details not available)";
+                    }
+                }
             }
             catch (HttpRequestException)
             {
@@ -250,6 +274,7 @@ namespace WeatherChecker
                             addressDetails_ReturnObject.Address.Village;
                         geoLocation_ReturnObject.Country = addressDetails_ReturnObject.Address.Country;
                         geoLocation_ReturnObject.Region = addressDetails_ReturnObject.Address.State;
+                        geoLocation_ReturnObject.DisplayName = addressDetails_ReturnObject.DisplayName;
                     }
                 }
                 else
@@ -257,6 +282,7 @@ namespace WeatherChecker
                     geoLocation_ReturnObject.City = "---";
                     geoLocation_ReturnObject.Country = "";
                     geoLocation_ReturnObject.Region = "";
+                    geoLocation_ReturnObject.DisplayName = "";
                 }
             }
             else
@@ -318,7 +344,7 @@ namespace WeatherChecker
             }
             catch (HttpRequestException)
             {
-                // Handle exception here
+                // Handle exception here: check in Browser: https://status.open-meteo.com/
                 throw;
                 // return null;
             }

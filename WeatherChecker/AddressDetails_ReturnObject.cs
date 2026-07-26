@@ -12,6 +12,12 @@ namespace WeatherChecker
     public class AddressDetails_ReturnObject
     {
         /// <summary>
+        /// Display name of the location (contains more Details).
+        /// </summary>
+        [JsonPropertyName("display_name")]
+        public string? DisplayName { get; set; }
+
+        /// <summary>
         /// Full country name.
         /// </summary>
         [JsonPropertyName("address")]

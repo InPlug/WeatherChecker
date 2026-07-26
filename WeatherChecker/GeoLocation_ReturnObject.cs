@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace WeatherChecker
 {
@@ -50,6 +51,12 @@ namespace WeatherChecker
         public double? Elevation { get; set; }
 
         /// <summary>
+        /// Display name of the location (contains more Details).
+        /// </summary>
+        [DataMember]
+        public string? DisplayName { get; set; }
+
+        /// <summary>
         /// Standard constructor.
         /// </summary>
         public GeoLocation_ReturnObject()
@@ -68,7 +75,8 @@ namespace WeatherChecker
             this.City = info.GetString("City");
             this.Latitude = (double?)info.GetValue("Latitude", typeof(double));
             this.Longitude = (double?)info.GetValue("Longitude", typeof(double));
-            this.Longitude = (double?)info.GetValue("Elevation", typeof(double));
+            this.Elevation = (double?)info.GetValue("Elevation", typeof(double));
+            this.DisplayName = info.GetString("DisplayName");
         }
 
         /// <summary>
@@ -84,6 +92,7 @@ namespace WeatherChecker
             info.AddValue("Latitude", this.Latitude);
             info.AddValue("Longitude", this.Longitude);
             info.AddValue("Elevation", this.Elevation);
+            info.AddValue("DisplayName", this.DisplayName);
         }
 
         /// <summary>
@@ -100,6 +109,7 @@ namespace WeatherChecker
             stringBuilder.Append(delimiter + "Latitude: " + this.Latitude);
             stringBuilder.Append(delimiter + "Longitude: " + this.Longitude);
             stringBuilder.Append(delimiter + "Elevation: " + this.Elevation);
+            stringBuilder.Append(delimiter + "DisplayName: " + this.DisplayName);
             return stringBuilder.ToString();
         }
 
