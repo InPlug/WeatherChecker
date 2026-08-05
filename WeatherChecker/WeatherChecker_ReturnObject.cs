@@ -17,6 +17,144 @@ namespace WeatherChecker
     public class WeatherChecker_ReturnObject
     {
         /// <summary>
+        /// Represents the units of measurement for various weather-related metrics.
+        /// </summary>
+        [DataContract]//[Serializable]
+        public class Units : ISerializable, IEquatable<Units>
+        {
+            /// <summary>
+            /// Gets or sets the unit of measurement for sunshine duration.
+            /// </summary>
+            [DataMember]
+            public string? SunshineDuration { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for temperature.
+            /// </summary>
+            [DataMember]
+            public string? Temperature { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for humidity.
+            /// </summary>
+            [DataMember]
+            public string? Humidity { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for surface pressure.
+            /// </summary>
+            [DataMember]
+            public string? SurfacePressure { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for rain.
+            /// </summary>
+            [DataMember]
+            public string? Rain { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for snowfall.
+            /// </summary>
+            [DataMember]
+            public string? Snowfall { get; set; }
+
+            /// <summary>
+            /// Gets or sets the unit of measurement for wind speed at 10 meters.
+            /// </summary>
+            [DataMember]
+            public string? Wind10mSpeed { get; set; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Units"/> class.
+            /// </summary>
+            public Units()
+            {
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Units"/> class during deserialization.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> containing the serialized object data.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that describes the source and destination of the serialized stream.</param>
+            protected Units(SerializationInfo info, StreamingContext context)
+            {
+                SunshineDuration = info.GetString(nameof(SunshineDuration));
+                Temperature = info.GetString(nameof(Temperature));
+                Humidity = info.GetString(nameof(Humidity));
+                SurfacePressure = info.GetString(nameof(SurfacePressure));
+                Rain = info.GetString(nameof(Rain));
+                Snowfall = info.GetString(nameof(Snowfall));
+                Wind10mSpeed = info.GetString(nameof(Wind10mSpeed));
+            }
+
+            /// <summary>
+            /// Populates a <see cref="SerializationInfo"/> with the data needed to serialize the target object.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
+            /// <param name="context">The destination context for this serialization.</param>
+            public void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                info.AddValue(nameof(SunshineDuration), SunshineDuration);
+                info.AddValue(nameof(Temperature), Temperature);
+                info.AddValue(nameof(Humidity), Humidity);
+                info.AddValue(nameof(SurfacePressure), SurfacePressure);
+                info.AddValue(nameof(Rain), Rain);
+                info.AddValue(nameof(Snowfall), Snowfall);
+                info.AddValue(nameof(Wind10mSpeed), Wind10mSpeed);
+            }
+
+            /// <summary>
+            /// Returns a string that represents the current object.
+            /// </summary>
+            /// <returns>A string representation of the object.</returns>
+            public override string ToString()
+            {
+                return $"SunshineDuration: {SunshineDuration}, Temperature: {Temperature},"
+                    + $" Humidity: {Humidity}, SurfacePressure: {SurfacePressure},"
+                    + $" Rain: {Rain}, Snowfall: {Snowfall}, Wind10mSpeed: {Wind10mSpeed}";
+            }
+
+            /// <summary>
+            /// Determines whether the specified object is equal to the current object.
+            /// </summary>
+            /// <param name="obj">The object to compare with the current object.</param>
+            /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
+            public override bool Equals(object? obj)
+            {
+                return Equals(obj as Units);
+            }
+
+            /// <summary>
+            /// Indicates whether the current object is equal to another object of the same type.
+            /// </summary>
+            /// <param name="other">An object to compare with this object.</param>
+            /// <returns><c>true</c> if the current object is equal to the other parameter; otherwise, <c>false</c>.</returns>
+            public bool Equals(Units? other)
+            {
+                if (other is null) return false;
+                if (ReferenceEquals(this, other)) return true;
+
+                return SunshineDuration == other.SunshineDuration &&
+                       Temperature == other.Temperature &&
+                       Humidity == other.Humidity &&
+                       SurfacePressure == other.SurfacePressure &&
+                       Rain == other.Rain &&
+                       Snowfall == other.Snowfall &&
+                       Wind10mSpeed == other.Wind10mSpeed;
+            }
+
+            /// <summary>
+            /// Serves as the default hash function.
+            /// </summary>
+            /// <returns>A hash code for the current object.</returns>
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(SunshineDuration, Temperature, Humidity,
+                    SurfacePressure, Rain, Snowfall, Wind10mSpeed);
+            }
+        }
+
+        /// <summary>
         /// Eine Wettervorhersage für einen bestimmten Zeitabschnitt.
         /// </summary>
         [DataContract]//[Serializable()]
@@ -396,6 +534,12 @@ namespace WeatherChecker
         /// Enthält Ortsinformationen.
         /// </summary>
         [DataMember]
+        public Units? UnitsContainer{ get; set; }
+
+        /// <summary>
+        /// Enthält Ortsinformationen.
+        /// </summary>
+        [DataMember]
         public GeoLocation_ReturnObject? Location { get; set; }
 
         /// <summary>
@@ -426,6 +570,15 @@ namespace WeatherChecker
         public WeatherChecker_ReturnObject()
         {
             this.Creation = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+            this.UnitsContainer = new Units()
+            {
+                Humidity = ".%",
+                Rain = ".mm",
+                Snowfall = ".cm",
+                SunshineDuration = ".s",
+                Temperature = ".°C",
+                Wind10mSpeed = ".km/h"
+            };
             this.Dataseries = new List<ForecastDataPoint>();
         }
 
@@ -437,6 +590,7 @@ namespace WeatherChecker
         protected WeatherChecker_ReturnObject(SerializationInfo info, StreamingContext context)
         {
             this.Creation = info.GetString("Creation");
+            this.UnitsContainer = (Units?)info.GetValue("UnitsContainer", typeof(Units));
             this.Location = (GeoLocation_ReturnObject?)info.GetValue("Location", typeof(GeoLocation_ReturnObject));
             this.Dataseries = (List<ForecastDataPoint>?)info.GetValue("Dataseries", typeof(List<ForecastDataPoint>));
         }
@@ -449,6 +603,7 @@ namespace WeatherChecker
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Creation", this.Creation);
+            info.AddValue("UnitsContainer", this.UnitsContainer);
             info.AddValue("Location", this.Location);
             info.AddValue("Dataseries", this.Dataseries);
         }

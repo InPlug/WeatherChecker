@@ -710,6 +710,21 @@ namespace WeatherChecker
             if (deserializedWeather == null || deserializedWeather.Hourly == null || deserializedWeather.Daily == null)
                 return weatherChecker_ReturnObject;
             weatherChecker_ReturnObject.Location.Elevation = deserializedWeather.Elevation;
+            weatherChecker_ReturnObject.UnitsContainer!.SunshineDuration =
+                deserializedWeather.DailyUnits?.SunshineDuration;
+            weatherChecker_ReturnObject.UnitsContainer.Humidity = 
+                deserializedWeather.HourlyUnits?.RelativeHumidity2m;
+            weatherChecker_ReturnObject.UnitsContainer.Temperature =
+                deserializedWeather.HourlyUnits?.Temperature2m;
+            weatherChecker_ReturnObject.UnitsContainer.Wind10mSpeed =
+                deserializedWeather.HourlyUnits?.WindSpeed10m;
+            weatherChecker_ReturnObject.UnitsContainer.SurfacePressure =
+                deserializedWeather.HourlyUnits?.SurfacePressure;
+            weatherChecker_ReturnObject.UnitsContainer.Rain =
+                deserializedWeather.HourlyUnits?.Rain;
+            weatherChecker_ReturnObject.UnitsContainer.Snowfall =
+                deserializedWeather.HourlyUnits?.Snowfall;
+
             // WeatherChecker_OpenMeteo_ReturnObject enthält pro Stunde einen Datenpunkt, WeatherChecker_ReturnObject
             // nur pro alle drei Stunden.
             // Deshalb wird in den nächsten beiden Loops nur jeder dritte Datenpunkt des WeatherChecker_OpenMeteo_ReturnObjects
@@ -734,38 +749,48 @@ namespace WeatherChecker
                 // out string sunsetString);
                 weatherChecker_ReturnObject.Dataseries[i].Sunrise = sunriseString;
                 weatherChecker_ReturnObject.Dataseries[i].Sunset = sunsetString;
-                weatherChecker_ReturnObject.Dataseries[i].SunshineDuration = deserializedWeather.Daily.SunshineDuration?[dailyIndex]
-                    + " s" ?? throw new ArgumentNullException("SunshineDuration");
+                weatherChecker_ReturnObject.Dataseries[i].SunshineDuration =
+                    deserializedWeather.Daily.SunshineDuration?[dailyIndex]
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.SunshineDuration;
                 weatherChecker_ReturnObject.Dataseries[i].RainSum = deserializedWeather.Daily.RainSum?[dailyIndex].ToString()
-                    + " mm" ?? throw new ArgumentNullException("RainSum");
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Rain;
                 weatherChecker_ReturnObject.Dataseries[i].ShowersSum = deserializedWeather.Daily.RainSum?[dailyIndex].ToString()
-                    + " mm" ?? throw new ArgumentNullException("ShowersSum");
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Rain;
                 weatherChecker_ReturnObject.Dataseries[i].SnowfallSum = deserializedWeather.Daily.SnowfallSum?[dailyIndex].ToString()
-                    + " cm" ?? throw new ArgumentNullException("SnowfallSum");
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Snowfall;
                 weatherChecker_ReturnObject.Dataseries[i].Temperature
-                    = deserializedWeather.Hourly.Temperature2m?[j].ToString() + " °C";
+                    = deserializedWeather.Hourly.Temperature2m?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Temperature;
                 weatherChecker_ReturnObject.Dataseries[i].Humidity
-                    = deserializedWeather.Hourly.RelativeHumidity2m?[j].ToString() + " %";
+                    = deserializedWeather.Hourly.RelativeHumidity2m?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Humidity;
                 weatherChecker_ReturnObject.Dataseries[i].ApparentTemperature
-                    = deserializedWeather.Hourly.ApparentTemperature?[j].ToString() + " °C";
+                    = deserializedWeather.Hourly.ApparentTemperature?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Temperature;
                 weatherChecker_ReturnObject.Dataseries[i].PrecipitationProbability
                     = deserializedWeather.Hourly.PrecipitationProbability?[j].ToString() + " %";
-                weatherChecker_ReturnObject.Dataseries[i].Rain = deserializedWeather.Hourly.Rain?[j].ToString() + " mm";
-                weatherChecker_ReturnObject.Dataseries[i].Showers = deserializedWeather.Hourly.Showers?[j].ToString() + " mm";
-                weatherChecker_ReturnObject.Dataseries[i].Snowfall = deserializedWeather.Hourly.Snowfall?[j].ToString() + " cm";
+                weatherChecker_ReturnObject.Dataseries[i].Rain = deserializedWeather.Hourly.Rain?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Rain;
+                weatherChecker_ReturnObject.Dataseries[i].Showers = deserializedWeather.Hourly.Showers?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Rain;
+                weatherChecker_ReturnObject.Dataseries[i].Snowfall = deserializedWeather.Hourly.Snowfall?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Snowfall;
                 weatherChecker_ReturnObject.Dataseries[i].Weather
                     = ConversionHelpers.WMONametoSimplifiedWeatherNameWithDayOrNight(deserializedWeather.Hourly.WeatherCode?[j]
                     ?? 0, timePoint, sunriseString, sunsetString);
                 weatherChecker_ReturnObject.Dataseries[i].SurfacePressure
-                    = deserializedWeather.Hourly.SurfacePressure?[j].ToString() + " hPa";
+                    = deserializedWeather.Hourly.SurfacePressure?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.SurfacePressure;
                 weatherChecker_ReturnObject.Dataseries[i].Cloudcover
                     = deserializedWeather.Hourly.CloudCover?[j].ToString() + " %";
                 WeatherChecker_ReturnObject.ForecastDataPoint.Wind wind10m
                     = new WeatherChecker_ReturnObject.ForecastDataPoint.Wind();
-                wind10m.Speed = deserializedWeather.Hourly.WindSpeed10m?[j].ToString() + " m/s";
+                wind10m.Speed = deserializedWeather.Hourly.WindSpeed10m?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Wind10mSpeed;
                 wind10m.Direction = ConversionHelpers.WindDirectionToCompassDirection(
                     deserializedWeather.Hourly.WindDirection10m?[j] ?? 0);
-                wind10m.GustsSpeed = deserializedWeather.Hourly.WindGusts10m?[j].ToString() + " m/s";
+                wind10m.GustsSpeed = deserializedWeather.Hourly.WindGusts10m?[j].ToString()
+                    + " " + weatherChecker_ReturnObject.UnitsContainer.Wind10mSpeed;
                 weatherChecker_ReturnObject.Dataseries[i].Wind10m = wind10m;
             }
             return weatherChecker_ReturnObject;
